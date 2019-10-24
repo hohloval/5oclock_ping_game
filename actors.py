@@ -49,26 +49,26 @@ class Actor:
         """
 
         raise NotImplementedError
-    
+
     def draw(self, game: Game) -> None:
         """
         Draw this actor on the stage.
         """
         pygame.draw.rect(game.screen, self._color, (self._x, self._y,
                                                     self._width, self._height))
-        
+
     def get_coordinates(self) -> Tuple[int]:
         """
         Return the coordinates of this actor.
         """
         return self._x, self._y
-    
+
     def get_dimensions(self) -> Tuple[int]:
         """
         Return the dimensions of this actor.
         """
         return self._width, self._height
-    
+
     def get_speed(self) -> int:
         """
         Return the speed of this actor.
@@ -79,7 +79,7 @@ class Actor:
 class HumanPlayer(Actor):
     """
     A class to represent a Human Player in the game.
-    
+
     === Private Attributes ===
     _score:
         score of this human player
@@ -121,7 +121,7 @@ class HumanPlayer(Actor):
 class AIPlayer(Actor):
     """
     A class to represent an AI Player in the game.
-    
+
     === Private Attributes ===
     _score:
         score of this AI player
@@ -133,22 +133,22 @@ class AIPlayer(Actor):
     _color: Tuple[int]
     _speed: int
     _score: int
-    
+
     def __init__(self, x: int, y: int) -> None:
         """
         Initialize an AI Player at the position <x> and <y> on the stage.
         """
-        
+
         super().__init__(x, y, 10, 10)
         self.velocity = 10
-    
+
     def get_score(self) -> int:
         """
         Return the score for this AI player.
         """
-        
+
         return self._score
-    
+
     # TODO: implement
     def move(self, game: Game) -> None:
         """
@@ -170,12 +170,17 @@ class Ball(Actor):
 
     def __init__(self, x: int, y: int) -> None:
         """
-        Initialize a Player with the given image <icon_file> at the position
-        <x> and <y> on the stage.
+        Initialize a ball with the given x and y position
         """
-    
-        super().__init__(x, y, 10, 10)
+        super().__init__(x, y, 18, 18)
         self._color = RED
+
+    def draw(self, game: Game) -> None:
+        """
+        Draws the ball to the screen.
+        """
+        pygame.draw.circle(game.screen, self._color, (self._x, self._y),
+                           self._width)
 
     # TODO: implement
     def move(self, game: 'Game') -> None:
