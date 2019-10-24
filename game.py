@@ -46,7 +46,7 @@ class Game:
         self.screen_size = size
         self._running = False
         self.goal_score = goal
-        
+
         self.player1 = None
         self.player2 = None
         self.ball = None
@@ -76,7 +76,7 @@ class Game:
                 self.player2.get_score() == self.goal_score:
             return True
         return False
-    
+
     def on_init(self) -> None:
         """
         Initialize this game.
@@ -85,9 +85,11 @@ class Game:
         self._running = True
         pygame.display.set_caption("PING")
 
+        display_width, display_height = pygame.display.get_surface().get_size()
+
         self.player1 = HumanPlayer(10, 0)
         self.player2 = HumanPlayer(935, 0)
-        self.ball = Ball(475, 355)
+        self.ball = Ball(display_width//2, display_height//2)
         self._actors.extend([self.player1, self.player2, self.ball])
 
     def on_move(self) -> None:
@@ -99,7 +101,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self._running = False
         keys = pygame.key.get_pressed()
-        
+
         # player1 moves
         if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
                                  self.player1.get_speed() >= 0):
@@ -117,7 +119,7 @@ class Game:
                                     self.player2.get_dimensions()[1] +
                                     self.player2.get_speed() <= 720):
             self.player2.move("down")
-        
+
         # ball moves
         self.ball.move(self)
 
@@ -127,13 +129,13 @@ class Game:
         """
         # set up the game
         self.on_init()
-        
+
         # run the game
         while self._running:
-            
+
             # move objects on the stage
             self.on_move()
-            
+
             # show up changes on the screen
             self.screen.fill(BLACK)
 
@@ -141,10 +143,10 @@ class Game:
             for i in range(0, 20):
                 pygame.draw.rect(self.screen, WHITE, (479, y, 2, 24))
                 y += 36
-            
+
             for actor in self._actors:
                 actor.draw(self)
             pygame.display.update()
-        
+
         pygame.quit()
 
