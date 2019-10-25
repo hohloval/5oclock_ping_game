@@ -150,10 +150,3 @@ class Game:
 
         pygame.quit()
 
-    def main_menu(self):
-        """
-        Displays the main menu which allows the user to start a game,
-        change settings, and exit the game.
-        """
-        return
-
