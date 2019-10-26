@@ -1,6 +1,7 @@
 from __future__ import annotations
 import pygame
-from typing import Optional
+import game
+from typing import Optional, Tuple
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -166,7 +167,8 @@ class Ball(Actor):
     _width: int
     _height: int
     _color: str
-    _speed: int
+    _change_x: int
+    _change_y: int
 
     def __init__(self, x: int, y: int) -> None:
         """
