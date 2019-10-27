@@ -240,9 +240,18 @@ class Ball(Actor):
 
         # Check collision with paddles
         if isinstance(game.get_actor(new_x, new_y), HumanPlayer):
-            self._x += self._dx  # Have to randomise the x-axis movement
+            self._x = new_x
             self._y += self._dy
             self._dx = -self._dx
+
+        # Check Collision with right paddle
+        # coords = game.player2.get_coordinates()
+        # dims = game.player2.get_dimensions()
+        # mid_y = (new_y + dims[1]) // 2 + new_y
+        # if new_x + self._width > coords[0] and coords[1] < mid_y < coords[1] - dims[0]:
+        #     self._dx = -self._dx
+        #     self._x = coords[0] + self._width
+        #     self._y += self._dy
 
         # No Collision
         else:
@@ -263,9 +272,9 @@ class Ball(Actor):
         return a tuple containing x, and y coordinates for the new direction
         """
         y = random.randint(-8, 8)
-        x = y - 8
-        if x in range(-1, 1):
-            x = 2
+        x = 10
+        # if x in range(-1, 1):
+        #     x = 2
         return x, y
 
 
