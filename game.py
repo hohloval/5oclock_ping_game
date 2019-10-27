@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List
 from actors import *
 import pygame
 import random
@@ -22,6 +22,22 @@ class Game:
             The second player (human OR AI) in this game.
         ball:
             The ball in this game.
+        start_pos:
+            True if it is the start of the round, false while round is ongoing
+        d_h:
+            The display screens height
+        d_w:
+            The display screens width
+        y_bound:
+            The vertical [upper, lower] bounds of the moving actors(players and
+                                                                     ball)
+        x_bound:
+            The horizontal [upper, lower] bounds of the moving actors(players
+                                                                      and ball)
+        self.upper_bound:
+            The upper bar of the stage
+        self.lower_bound:
+            The lower bar of the stage
 
         === Private Attributes ===
         _running:
@@ -33,10 +49,15 @@ class Game:
     screen_size: Tuple[int]
     _running: bool
     goal_score: int
+    start_pos: bool
     player1: HumanPlayer
     player2: Union[HumanPlayer, AIPlayer]
     ball: Ball
     _actors: List[Actor]
+    d_w: int
+    d_h: int
+    y_bound: list[int]
+    x_bound: list[int]
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -46,11 +67,17 @@ class Game:
         self.screen_size = size
         self._running = False
         self.goal_score = goal
-
         self.player1 = None
         self.player2 = None
         self.ball = None
+        self.upper_bound = None
+        self.lower_bound = None
         self._actors = []
+        self._go = False
+        self.d_w, self.d_h = pygame.display.get_surface().get_size()
+        self.x_bound = [0, self.d_w]
+        self.y_bound = None
+        self.start_pos=True
 
     # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
@@ -68,6 +95,9 @@ class Game:
                 return actor
         return None
 
+    def set_go(self, switch: bool) -> None:
+        self._go = switch
+
     def game_won(self) -> bool:
         """
         Return True iff the game has been won.
@@ -77,6 +107,20 @@ class Game:
             return True
         return False
 
+    def new_round(self):
+        """
+        Reset the stage for the new round
+        """
+        d_h, d_w = self.d_h, self.d_w
+        h_bars = round(d_h * 0.05)
+        self.y_bound = [h_bars, d_h - h_bars]
+        self.player1 = HumanPlayer(10, d_h // 2, self.y_bound)
+        self.player2 = HumanPlayer(d_w - 25, d_h // 2, self.y_bound)
+        self.ball = Ball(d_w // 2, d_h // 2, self.y_bound, self.x_bound)
+        self.upper_bound = Boundaries(0, 0, d_w, h_bars, self.y_bound)
+        self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
+                                      self.y_bound)
+
     def on_init(self) -> None:
         """
         Initialize this game.
@@ -84,13 +128,9 @@ class Game:
         pygame.init()
         self._running = True
         pygame.display.set_caption("PING")
-
-        display_width, display_height = pygame.display.get_surface().get_size()
-
-        self.player1 = HumanPlayer(10, 0)
-        self.player2 = HumanPlayer(935, 0)
-        self.ball = Ball(display_width//2, display_height//2)
-        self._actors.extend([self.player1, self.player2, self.ball])
+        self.new_round()
+        self._actors.extend([self.player1, self.player2, self.ball,
+                             self.upper_bound, self.lower_bound])
 
     def on_move(self) -> None:
         """
@@ -101,27 +141,35 @@ class Game:
             if event.type == pygame.QUIT:
                 self._running = False
         keys = pygame.key.get_pressed()
+        if self._go==True:
+            # player1 moves
+            if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
+                                     self.player1.get_speed() >= 0):
+                self.player1.move("up")
+            if keys[pygame.K_s] and (self.player1.get_coordinates()[1] +
+                                     self.player1.get_dimensions()[1] +
+                                     self.player1.get_speed() <= 720):
+                self.player1.move("down")
 
-        # player1 moves
-        if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
-                                 self.player1.get_speed() >= 0):
-            self.player1.move("up")
-        if keys[pygame.K_s] and (self.player1.get_coordinates()[1] +
-                                 self.player1.get_dimensions()[1] +
-                                 self.player1.get_speed() <= 720):
-            self.player1.move("down")
+            # player2 moves
+            if keys[pygame.K_UP] and (self.player2.get_coordinates()[1] -
+                                      self.player2.get_speed() >= 0):
+                self.player2.move("up")
+            if keys[pygame.K_DOWN] and (self.player2.get_coordinates()[1] +
+                                        self.player2.get_dimensions()[1] +
+                                        self.player2.get_speed() <= 720):
+                self.player2.move("down")
+            # if keys[pygame.K_SPACE]:
+            #     self._go = False
 
-        # player2 moves
-        if keys[pygame.K_UP] and (self.player2.get_coordinates()[1] -
-                                  self.player2.get_speed() >= 0):
-            self.player2.move("up")
-        if keys[pygame.K_DOWN] and (self.player2.get_coordinates()[1] +
-                                    self.player2.get_dimensions()[1] +
-                                    self.player2.get_speed() <= 720):
-            self.player2.move("down")
-
-        # ball moves
-        self.ball.move(self)
+            # ball moves
+            self.ball.move(self)
+            # if keys[pygame.K_r]:
+            #     self.ball.
+        else:
+            if keys[pygame.K_SPACE]:
+                self._go = True
+                self.ball.init_move(self)
 
     def on_execute(self) -> None:
         """
@@ -129,7 +177,6 @@ class Game:
         """
         # set up the game
         self.on_init()
-
         # run the game
         while self._running:
 
@@ -138,14 +185,16 @@ class Game:
 
             # show up changes on the screen
             self.screen.fill(BLACK)
-
+            display_width, display_height = pygame.display.get_surface().get_size()
             y = 6
             for i in range(0, 20):
-                pygame.draw.rect(self.screen, WHITE, (479, y, 2, 24))
+                pygame.draw.rect(self.screen, WHITE, ((display_width//2)-1, y, 2, 24))
                 y += 36
 
             for actor in self._actors:
                 actor.draw(self)
+
+            # pygame.draw.rect(self.screen, RED, (0,0, display_width,5 ))
             pygame.display.update()
 
         pygame.quit()
