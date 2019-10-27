@@ -46,12 +46,12 @@ class _Button:
     _on_click: Callable
 
     def __init__(self, x, y, width, height, label, on_click):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.label = label
-        self.on_click = on_click
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+        self._label = label
+        self._on_click = on_click
 
     def draw(self, game: Game):
         """
@@ -64,11 +64,11 @@ class _Button:
 
         # Setting up label text
         font = pygame.font.Font(None, 14)
-        button_label = font.render(self.label, True, white)
+        button_label = font.render(self._label, True, white)
 
         # Drawing to screen
-        pygame.draw.rect(game.screen, blue, (self.x, self.y, self.width,
-                                             self.height))
-        game.screen.blit(button_label, (self.x, self.y))
+        pygame.draw.rect(game.screen, blue, (self._x, self._y, self._width,
+                                             self._height))
+        game.screen.blit(button_label, (self._x, self._y))
 
 
