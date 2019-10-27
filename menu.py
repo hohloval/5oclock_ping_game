@@ -3,6 +3,7 @@ from typing import Optional, List, Callable
 from game import Game
 import pygame
 
+
 class MainMenu:
     """
     The main menu that gives the user the option to: start a human vs human
@@ -37,21 +38,37 @@ class _Button:
     """
     A button the user can click on to make something happen
     """
-    x: int
-    y: int
-    width: int
-    height: int
-    on_click: Callable
+    _x: int
+    _y: int
+    _width: int
+    _height: int
+    _label: str
+    _on_click: Callable
 
-    def __init__(self, x, y, width, height, on_click):
+    def __init__(self, x, y, width, height, label, on_click):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.label = label
         self.on_click = on_click
 
-    def draw(self):
+    def draw(self, game: Game):
         """
         Draws the button to the screen
         """
+
+        # Useful colour name variables
+        blue = pygame.Color((0, 0, 255))
+        white = pygame.Color((255, 255, 255))
+
+        # Setting up label text
+        font = pygame.font.Font(None, 14)
+        button_label = font.render(self.label, True, white)
+
+        # Drawing to screen
+        pygame.draw.rect(game.screen, blue, (self.x, self.y, self.width,
+                                             self.height))
+        game.screen.blit(button_label, (self.x, self.y))
+
 
