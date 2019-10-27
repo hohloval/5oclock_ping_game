@@ -205,28 +205,40 @@ class Ball(Actor):
         """
         new_x = self._x+self._dx
         new_y = self._y+self._dy
+
+        # Check collision with Top border
         if new_y - self._width <= self.y_bound[0]:
             self._x += self._dx
-            self._y = self.y_bound[0]+self._width
+            self._y = self.y_bound[0]+self._height
             self._dy = -self._dy
+
+        # Check Collision with bottom Border
         elif new_y + self._width >= self.y_bound[1]:
             self._x += self._dx
-            self._y = self.y_bound[1]-self._width
+            self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
+
+        # Check Collision with left screen edge
         if new_x - self._width <= self.x_bound[0]:
             game.player2.change_score(1)
             self._x = game.d_w//2
             self._y = game.d_h//2
             game.set_go(False)
+
+        # Check Collision with right screen edge
         elif new_x + self._width >= self.x_bound[1]:
             game.player1.change_score(1)
             self._x = game.d_w//2
             self._y = game.d_h//2
             game.set_go(False)
+
+        # Check collision with paddles
         if isinstance(game.get_actor(new_x, new_y), HumanPlayer):
             self._x += self._dx  # Have to randomise the x-axis movement
             self._y += self._dy
             self._dx = -self._dx
+
+        # No Collision
         else:
             self._x += self._dx
             self._y += self._dy
@@ -235,18 +247,20 @@ class Ball(Actor):
         """
         Is the initial movement of the ball at the beginning of the round.
         """
-        self._dx = self.new_direction("x")
-        self._dy = self.new_direction("y")
+        self._dx, self._dy = self.new_direction()
 
-    def new_direction(self, axis: str) -> int:
-        if axis == "x":
-            x = random.randint(-5, 5)
-            while x == 0:
-                x = random.randint(-5, 5)
-            return x
-        elif axis == "y":
-            y = random.randint(-5, 5)
-            return y
+    def new_direction(self) -> Tuple[int, int]:
+        """
+        Calculates a randomized direction of movement for the ball, that is
+        dx and dy.
+
+        return a tuple containing x, and y coordinates for the new direction
+        """
+        y = random.randint(-8, 8)
+        x = y - 8
+        if x in range(-1, 1):
+            x = 2
+        return x, y
 
 
 class Boundaries(Actor):
