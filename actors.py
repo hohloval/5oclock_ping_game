@@ -2,7 +2,7 @@ from __future__ import annotations
 import pygame
 import random
 # from game import Game
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -288,3 +288,40 @@ class Boundaries(Actor):
         return
 
 
+class ScoreBoard(Actor):
+    """
+    Represents the Scoreboard of one player in the game
+    """
+
+    _x: int
+    _y: int
+    _width: int
+    _height: int
+    _color: Tuple[int]
+    _score: int
+    _player: Union[HumanPlayer, AIPlayer]
+
+    def __init__(self, x: int, y: int, width: int, height: int, y_bound,
+                 player: Union[HumanPlayer, AIPlayer]) -> None:
+        super().__init__(x, y, width, height, y_bound)
+        self._color = RED
+        self._score = 0
+        self._player = player
+
+    def draw(self, game: 'Game') -> None:
+        """
+        Draws the ball to the screen.
+        """
+        text = pygame.font.render(self._score, 0, (0, 0, 0))
+        text_pos = text.get_rect(self._x, self._y, self._width, self._height)
+        game.screen.blit(text, text_pos)
+
+    def move(self, game: 'Game'):
+        return
+
+    def update(self, game: 'Game'):
+        """
+        Updates the score value of this class with the corresponding score
+        value in the game
+        """
+        self._score = self._player.get_score()
