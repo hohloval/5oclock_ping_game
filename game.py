@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from actors import *
 import pygame
 import random
@@ -141,7 +141,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self._running = False
         keys = pygame.key.get_pressed()
-        if self._go==True:
+        if self._go:
             # player1 moves
             if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
                                      self.player1.get_speed() >= 0):

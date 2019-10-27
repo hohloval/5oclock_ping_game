@@ -2,7 +2,7 @@ from __future__ import annotations
 import pygame
 import random
 # from game import Game
-from typing import Optional
+from typing import Optional, Tuple
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -125,7 +125,8 @@ class HumanPlayer(Actor):
             self._y += self._speed
 
     def change_score(self, change_in_score: int):
-        self._score+=change_in_score
+        self._score += change_in_score
+
 
 class AIPlayer(Actor):
     """
