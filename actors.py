@@ -119,13 +119,19 @@ class HumanPlayer(Actor):
         """
         Move the human player on the <game>'s stage based on direction.
         """
-        if (direction == "up") and (self._y-self._speed)>=self.y_bound[0]:
+        if (direction == "up") and (self._y-self._speed) >= self.y_bound[0]:
             self._y -= self._speed
         elif (direction == "down") and ((self._y+self._height)+self._speed)<=self.y_bound[1]:
             self._y += self._speed
 
     def change_score(self, change_in_score: int):
         self._score += change_in_score
+
+    def reset(self, game: 'Game'):
+        """
+        Resets the position of this player to the default starting location
+        """
+        self._y = game.screen_size[1] // 2 + self._height//2
 
 
 class AIPlayer(Actor):
@@ -304,24 +310,25 @@ class ScoreBoard(Actor):
     def __init__(self, x: int, y: int, width: int, height: int, y_bound,
                  player: Union[HumanPlayer, AIPlayer]) -> None:
         super().__init__(x, y, width, height, y_bound)
-        self._color = RED
+        self._color = WHITE
         self._score = 0
         self._player = player
 
     def draw(self, game: 'Game') -> None:
         """
-        Draws the ball to the screen.
+        Draws the score to the screen.
         """
-        text = pygame.font.render(self._score, 0, (0, 0, 0))
-        text_pos = text.get_rect(self._x, self._y, self._width, self._height)
+        font = pygame.font.Font(None, 70)
+        text = font.render(str(self._score), 1, self._color)
+        text_pos = text.get_rect(centerx=self._x, centery=self._y)
         game.screen.blit(text, text_pos)
 
     def move(self, game: 'Game'):
         return
 
-    def update(self, game: 'Game'):
+    def update(self):
         """
-        Updates the score value of this class with the corresponding score
+        Updates the score value of this object with the corresponding score
         value in the game
         """
         self._score = self._player.get_score()

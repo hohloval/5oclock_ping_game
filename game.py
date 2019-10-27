@@ -58,6 +58,8 @@ class Game:
     d_h: int
     y_bound: List[int]
     x_bound: List[int]
+    board_player1: ScoreBoard
+    board_player2: ScoreBoard
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -120,6 +122,10 @@ class Game:
         self.upper_bound = Boundaries(0, 0, d_w, h_bars, self.y_bound)
         self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
                                       self.y_bound)
+        self.board_player1 = ScoreBoard(self.d_w // 3, 450, 50, 50, 0,
+                                        self.player1)
+        self.board_player2 = ScoreBoard(2 * self.d_w // 3, 450, 50, 50, 0,
+                                        self.player2)
 
     def on_init(self) -> None:
         """
@@ -128,9 +134,11 @@ class Game:
         pygame.init()
         self._running = True
         pygame.display.set_caption("PING")
+
         self.new_round()
         self._actors.extend([self.player1, self.player2, self.ball,
-                             self.upper_bound, self.lower_bound])
+                             self.upper_bound, self.lower_bound,
+                             self.board_player1, self.board_player2])
 
     def on_move(self) -> None:
         """
@@ -196,6 +204,9 @@ class Game:
             for actor in self._actors:
                 actor.draw(self)
 
+            # Update ScoreBoards:
+            self.board_player1.update()
+            self.board_player2.update()
             # pygame.draw.rect(self.screen, RED, (0,0, display_width,5 ))
             pygame.display.update()
 
