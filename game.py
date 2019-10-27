@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 from actors import *
 import pygame
 import random
@@ -56,8 +56,8 @@ class Game:
     _actors: List[Actor]
     d_w: int
     d_h: int
-    y_bound: list[int]
-    x_bound: list[int]
+    y_bound: List[int]
+    x_bound: List[int]
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -77,7 +77,7 @@ class Game:
         self.d_w, self.d_h = pygame.display.get_surface().get_size()
         self.x_bound = [0, self.d_w]
         self.y_bound = None
-        self.start_pos=True
+        self.start_pos = True
 
     # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
@@ -185,7 +185,9 @@ class Game:
 
             # show up changes on the screen
             self.screen.fill(BLACK)
-            display_width, display_height = pygame.display.get_surface().get_size()
+            display_width, display_height = \
+                pygame.display.get_surface().get_size()
+
             y = 6
             for i in range(0, 20):
                 pygame.draw.rect(self.screen, WHITE, ((display_width//2)-1, y, 2, 24))

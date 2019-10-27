@@ -64,13 +64,13 @@ class Actor:
         pygame.draw.rect(game.screen, self._color, (self._x, self._y,
                                                     self._width, self._height))
 
-    def get_coordinates(self) -> Tuple[int]:
+    def get_coordinates(self) -> Tuple[int, int]:
         """
         Return the coordinates of this actor.
         """
         return self._x, self._y
 
-    def get_dimensions(self) -> Tuple[int]:
+    def get_dimensions(self) -> Tuple[int, int]:
         """
         Return the dimensions of this actor.
         """
@@ -191,7 +191,7 @@ class Ball(Actor):
         self._dy = None
         self.x_bound = x_bound
 
-    def draw(self, game:'Game') -> None:
+    def draw(self, game: 'Game') -> None:
         """
         Draws the ball to the screen.
         """
@@ -261,7 +261,7 @@ class Boundaries(Actor):
 
     def __init__(self, x: int, y: int, width: int, height: int, y_bound) ->None:
         super().__init__(x, y, width , height, y_bound )
-        self._color = RED;
+        self._color = RED
 
     def draw(self, game: 'Game') -> None:
         """
