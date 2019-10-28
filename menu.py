@@ -76,5 +76,3 @@ class _Button:
         pygame.draw.rect(game.screen, blue, (self._x, self._y, self._width,
                                              self._height))
         game.screen.blit(button_label, (self._x, self._y))
-
-
