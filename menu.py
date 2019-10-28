@@ -12,10 +12,14 @@ class MainMenu:
     _buttons: List[_Button]
     _game: Game
 
-    def __init__(self):
+    def __init__(self, game):
         """
         Initializes the menu and all of its buttons
         """
+        self._game = game;
+        self._buttons.append(_Button(400, 200, 100, 50,
+                                     "Two player game", None))
+
 
     def display(self):
         """
@@ -32,6 +36,8 @@ class MainMenu:
         """
         Draws everything to the screen
         """
+        for (button in self._buttons):
+            button.draw(self._game);
 
 
 class _Button:
