@@ -80,6 +80,7 @@ class Game:
         self.x_bound = [0, self.d_w]
         self.y_bound = None
         self.start_pos = True
+        self.clock = pygame.time.Clock()
 
     # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
@@ -92,8 +93,8 @@ class Game:
                                actor.get_coordinates()[1]
             actor_width, actor_height = actor.get_dimensions()[0], \
                                         actor.get_dimensions()[1]
-            if x in range(actor_x, actor_x + actor_width + 1) and \
-                    y in range(actor_y, actor_y + actor_height + 1):
+            if actor_x < x < actor_x + actor_width and \
+                    actor_y < y < actor_y + actor_height:
                 return actor
         return None
 
@@ -140,11 +141,10 @@ class Game:
                              self.upper_bound, self.lower_bound,
                              self.board_player1, self.board_player2])
 
-    def on_move(self) -> None:
+    def on_move(self, dt: float) -> None:
         """
         Move every object on the stage while this game is on execute.
         """
-        pygame.time.delay(50)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._running = False
@@ -153,25 +153,25 @@ class Game:
             # player1 moves
             if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
                                      self.player1.get_speed() >= 0):
-                self.player1.move("up")
+                self.player1.move("up", dt)
             if keys[pygame.K_s] and (self.player1.get_coordinates()[1] +
                                      self.player1.get_dimensions()[1] +
                                      self.player1.get_speed() <= 720):
-                self.player1.move("down")
+                self.player1.move("down", dt)
 
             # player2 moves
             if keys[pygame.K_UP] and (self.player2.get_coordinates()[1] -
                                       self.player2.get_speed() >= 0):
-                self.player2.move("up")
+                self.player2.move("up", dt)
             if keys[pygame.K_DOWN] and (self.player2.get_coordinates()[1] +
                                         self.player2.get_dimensions()[1] +
                                         self.player2.get_speed() <= 720):
-                self.player2.move("down")
+                self.player2.move("down", dt)
             # if keys[pygame.K_SPACE]:
             #     self._go = False
 
             # ball moves
-            self.ball.move(self)
+            self.ball.move(self, dt)
             # if keys[pygame.K_r]:
             #     self.ball.
         else:
@@ -187,9 +187,10 @@ class Game:
         self.on_init()
         # run the game
         while self._running:
-
+            dt = self.clock.tick() / 30
+            # print(self.clock.get_fps())
             # move objects on the stage
-            self.on_move()
+            self.on_move(dt)
 
             # show up changes on the screen
             self.screen.fill(BLACK)

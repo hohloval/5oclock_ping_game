@@ -50,7 +50,7 @@ class Actor:
         self._color = WHITE
         self.y_bound = y_bound
 
-    def move(self, game: 'Game') -> None:
+    def move(self, game: 'Game', dt: float) -> None:
         """
         Move this actor.
         """
@@ -61,7 +61,7 @@ class Actor:
         """
         Draw this actor on the stage.
         """
-        pygame.draw.rect(game.screen, self._color, (self._x, self._y,
+        pygame.draw.rect(game.screen, self._color, (int(self._x), int(self._y),
                                                     self._width, self._height))
 
     def get_coordinates(self) -> Tuple[int, int]:
@@ -115,14 +115,14 @@ class HumanPlayer(Actor):
 
         return self._score
 
-    def move(self, direction: str) -> None:
+    def move(self, direction: str, dt: float) -> None:
         """
         Move the human player on the <game>'s stage based on direction.
         """
         if (direction == "up") and (self._y-self._speed) >= self.y_bound[0]:
-            self._y -= self._speed
+            self._y -= self._speed * dt
         elif (direction == "down") and ((self._y+self._height)+self._speed)<=self.y_bound[1]:
-            self._y += self._speed
+            self._y += self._speed * dt
 
     def change_score(self, change_in_score: int):
         self._score += change_in_score
@@ -201,11 +201,11 @@ class Ball(Actor):
         """
         Draws the ball to the screen.
         """
-        pygame.draw.circle(game.screen, self._color, (self._x, self._y),
+        pygame.draw.circle(game.screen, self._color, (int(self._x), int(self._y)),
                            self._width)
     # TODO: implement
 
-    def move(self, game: 'Game') -> None:
+    def move(self, game: 'Game', dt: float) -> None:
         """
         Move the ball on the <game>'s stage based.
         """
@@ -214,13 +214,13 @@ class Ball(Actor):
 
         # Check collision with Top border
         if new_y - self._width <= self.y_bound[0]:
-            self._x += self._dx
+            self._x += self._dx * dt
             self._y = self.y_bound[0]+self._height
             self._dy = -self._dy
 
         # Check Collision with bottom Border
         elif new_y + self._width >= self.y_bound[1]:
-            self._x += self._dx
+            self._x += self._dx  * dt
             self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
 
@@ -241,7 +241,7 @@ class Ball(Actor):
         # Check collision with paddles
         if isinstance(game.get_actor(new_x, new_y), HumanPlayer):
             self._x = new_x
-            self._y += self._dy
+            self._y += self._dy  * dt
             self._dx = -self._dx
 
         # Check Collision with right paddle
@@ -255,8 +255,8 @@ class Ball(Actor):
 
         # No Collision
         else:
-            self._x += self._dx
-            self._y += self._dy
+            self._x += self._dx  * dt
+            self._y += self._dy  * dt
 
     def init_move(self, game: 'Game') -> None:
         """
@@ -271,7 +271,7 @@ class Ball(Actor):
 
         return a tuple containing x, and y coordinates for the new direction
         """
-        y = random.randint(-8, 8)
+        y = random.randint(-16, 16)
         x = 10
         # if x in range(-1, 1):
         #     x = 2
