@@ -4,7 +4,7 @@ This module initializes and runs the main game.
 
 from game import Game
 
-SCREEN_SIZE = (960, 720)
+SCREEN_SIZE = (960, 500)
 
 if __name__ == "__main__":
     goal_score = 10
