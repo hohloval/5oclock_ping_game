@@ -60,6 +60,7 @@ class Game:
     x_bound: List[int]
     board_player1: ScoreBoard
     board_player2: ScoreBoard
+    start_message: Message
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -116,28 +117,37 @@ class Game:
         creat new players and ball, else just reset the position.
         """
         if self._go is False:
+            # DO WE NEED TO DO THIS FOR EVERY FRAME?
             d_h, d_w = self.d_h, self.d_w
             h_bars = round(d_h * 0.05)
             self.y_bound = [h_bars, d_h - h_bars]
             self.player1 = HumanPlayer(10, (d_h // 2) - 40, self.y_bound, self)
             self.player2 = HumanPlayer(d_w - 25, (d_h // 2) - 40, self.y_bound, self)
             self.ball = Ball(d_w // 2, d_h // 2, self.y_bound, self.x_bound, self)
+
             self.upper_bound = Boundaries(0, 0, d_w, h_bars, self.y_bound, self)
             self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
                                           self.y_bound, self)
+
             self.board_player1 = ScoreBoard(self.d_w // 3, 450, 50, 50, 0,
                                             self.player1, self)
             self.board_player2 = ScoreBoard(2 * self.d_w // 3, 450, 50, 50, 0,
                                             self.player2, self)
+
+            self.start_message = Message(self.d_w // 2, self.d_h // 2, 50, 50,
+                                         0, self, "Press SPACE to start", True)
+
             self._actors = []
             self._actors.extend([self.player1, self.player2, self.ball,
                                  self.upper_bound, self.lower_bound,
-                                 self.board_player1, self.board_player2])
+                                 self.board_player1, self.board_player2,
+                                 self.start_message])
+
         else:
             self.player1.reset_pos()
             self.player2.reset_pos()
             self.ball.reset_pos()
-
+            self.start_message.set_drawn(True)
 
     def on_init(self) -> None:
         """
@@ -185,6 +195,7 @@ class Game:
             #     self.ball.
         else:
             if keys[pygame.K_SPACE]:
+                self.start_message.set_drawn(False)
                 self._go = True
                 self.ball.init_move()
 

@@ -330,8 +330,9 @@ class Message(Actor):
     _color: Tuple[int]
     _speed: int
     _text: str
+    _is_drawn: bool
 
-    def __init__(self, x, y, width, height, y_bound, game, text):
+    def __init__(self, x, y, width, height, y_bound, game, text, is_shown):
         """
         Initialize an actor with the given <x> and <y> position and
         <width>x<height> dimensions on the game's stage.
@@ -341,15 +342,26 @@ class Message(Actor):
         self.y_bound = y_bound
         self.game = game
         self._text = text
+        self._is_drawn = is_shown
+
+    def set_drawn(self, cond: bool):
+        """
+        Sets this text to be drawn, or not based on the condition
+
+        cond: the condition on whether this object is displayed
+        """
+        self._is_drawn = cond
 
     def draw(self):
         """
-        Draw the text to the screen
+        Draw the text to the screen if the message is supposed to
+        be drawn
         """
-        font = pygame.font.Font(None, 100)
-        text = font.render(self._text, 1, self._color)
-        text_pos = text.get_rect(centerx=self._x, centery=self._y)
-        self.game.screen.blit(text, text_pos)
+        if self._is_drawn:
+            font = pygame.font.Font(None, 70)
+            text = font.render(self._text, 1, self._color)
+            text_pos = text.get_rect(centerx=self._x, centery=self._y)
+            self.game.screen.blit(text, text_pos)
 
     def move(self):
         """
