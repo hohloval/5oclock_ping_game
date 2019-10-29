@@ -275,7 +275,8 @@ class Ball(Actor):
         """
         Is the initial movement of the ball at the beginning of the round.
         """
-        self._dx, self._dy = self.new_direction(-16, 16)
+        self._dy = self.new_direction(-16, 16)[1]
+        self._dx = random.choice([-10, 10])
 
     def new_direction(self, lower: int, upper: int) -> Tuple[int, int]:
         """
