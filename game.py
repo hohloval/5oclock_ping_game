@@ -112,21 +112,32 @@ class Game:
 
     def new_round(self):
         """
-        Reset the stage for the new round
+        Reset the stage for the new round. If this the beginning of the game,
+        creat new players and ball, else just reset the position.
         """
-        d_h, d_w = self.d_h, self.d_w
-        h_bars = round(d_h * 0.05)
-        self.y_bound = [h_bars, d_h - h_bars]
-        self.player1 = HumanPlayer(10, d_h // 2, self.y_bound)
-        self.player2 = HumanPlayer(d_w - 25, d_h // 2, self.y_bound)
-        self.ball = Ball(d_w // 2, d_h // 2, self.y_bound, self.x_bound)
-        self.upper_bound = Boundaries(0, 0, d_w, h_bars, self.y_bound)
-        self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
-                                      self.y_bound)
-        self.board_player1 = ScoreBoard(self.d_w // 3, 450, 50, 50, 0,
-                                        self.player1)
-        self.board_player2 = ScoreBoard(2 * self.d_w // 3, 450, 50, 50, 0,
-                                        self.player2)
+        if self._go is False:
+            d_h, d_w = self.d_h, self.d_w
+            h_bars = round(d_h * 0.05)
+            self.y_bound = [h_bars, d_h - h_bars]
+            self.player1 = HumanPlayer(10, (d_h // 2) - 40, self.y_bound, self)
+            self.player2 = HumanPlayer(d_w - 25, (d_h // 2) - 40, self.y_bound, self)
+            self.ball = Ball(d_w // 2, d_h // 2, self.y_bound, self.x_bound, self)
+            self.upper_bound = Boundaries(0, 0, d_w, h_bars, self.y_bound, self)
+            self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
+                                          self.y_bound, self)
+            self.board_player1 = ScoreBoard(self.d_w // 3, 450, 50, 50, 0,
+                                            self.player1, self)
+            self.board_player2 = ScoreBoard(2 * self.d_w // 3, 450, 50, 50, 0,
+                                            self.player2, self)
+            self._actors = []
+            self._actors.extend([self.player1, self.player2, self.ball,
+                                 self.upper_bound, self.lower_bound,
+                                 self.board_player1, self.board_player2])
+        else:
+            self.player1.reset_pos()
+            self.player2.reset_pos()
+            self.ball.reset_pos()
+
 
     def on_init(self) -> None:
         """
@@ -135,11 +146,9 @@ class Game:
         pygame.init()
         self._running = True
         pygame.display.set_caption("PING")
-
         self.new_round()
-        self._actors.extend([self.player1, self.player2, self.ball,
-                             self.upper_bound, self.lower_bound,
-                             self.board_player1, self.board_player2])
+
+
 
     def on_move(self, dt: float) -> None:
         """
@@ -171,13 +180,13 @@ class Game:
             #     self._go = False
 
             # ball moves
-            self.ball.move(self, dt)
+            self.ball.move(dt)
             # if keys[pygame.K_r]:
             #     self.ball.
         else:
             if keys[pygame.K_SPACE]:
                 self._go = True
-                self.ball.init_move(self)
+                self.ball.init_move()
 
     def on_execute(self) -> None:
         """
@@ -203,7 +212,7 @@ class Game:
                 y += 36
 
             for actor in self._actors:
-                actor.draw(self)
+                actor.draw()
 
             # Update ScoreBoards:
             self.board_player1.update()
