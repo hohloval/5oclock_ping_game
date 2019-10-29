@@ -319,6 +319,45 @@ class Boundaries(Actor):
         return
 
 
+class Message(Actor):
+    """
+    A Message of text that displays on the game screen
+    """
+    _x: int
+    _y: int
+    _width: int
+    _height: int
+    _color: Tuple[int]
+    _speed: int
+    _text: str
+
+    def __init__(self, x, y, width, height, y_bound, game, text):
+        """
+        Initialize an actor with the given <x> and <y> position and
+        <width>x<height> dimensions on the game's stage.
+        """
+        super().__init__(x, y, width, height, y_bound, game)
+        self._color = (81, 194, 231)
+        self.y_bound = y_bound
+        self.game = game
+        self._text = text
+
+    def draw(self):
+        """
+        Draw the text to the screen
+        """
+        font = pygame.font.Font(None, 100)
+        text = font.render(self._text, 1, self._color)
+        text_pos = text.get_rect(centerx=self._x, centery=self._y)
+        self.game.screen.blit(text, text_pos)
+
+    def move(self):
+        """
+        This actor cannot be moved
+        """
+        pass
+
+
 class ScoreBoard(Actor):
     """
     Represents the Scoreboard of one player in the game
