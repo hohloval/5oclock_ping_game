@@ -267,16 +267,18 @@ class Ball(Actor):
         """
         Is the initial movement of the ball at the beginning of the round.
         """
-        self._dx, self._dy = self.new_direction()
+        self._dx, self._dy = self.new_direction(-16, 16)
 
-    def new_direction(self) -> Tuple[int, int]:
+    def new_direction(self, lower: int, upper: int) -> Tuple[int, int]:
         """
         Calculates a randomized direction of movement for the ball, that is
         dx and dy.
 
+        lower: The lower bound for the change in y direction
+        upper: the upper bound for the change in the y direction
         return a tuple containing x, and y coordinates for the new direction
         """
-        y = random.randint(-16, 16)
+        y = random.randint(lower, upper)
         x = 10
         # if x in range(-1, 1):
         #     x = 2

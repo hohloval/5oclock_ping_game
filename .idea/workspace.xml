@@ -15,12 +15,13 @@
       <usages-collector id="statistics.lifecycle.project">
         <counts>
           <entry key="project.closed" value="4" />
+          <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.19" value="1" />
           <entry key="project.open.time.21" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.4" value="2" />
-          <entry key="project.opened" value="6" />
+          <entry key="project.opened" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -37,12 +38,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3766" />
+          <entry key="py" value="3948" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="3766" />
+          <entry key="Python" value="3948" />
         </counts>
       </usages-collector>
     </session>
@@ -52,11 +53,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2990">
-              <caret line="208" column="38" selection-start-line="208" selection-start-column="38" selection-end-line="208" selection-end-column="38" />
-              <folding>
-                <marker date="1572206947605" expanded="true" signature="4495:4504" ph="..." />
-              </folding>
+            <state relative-caret-position="551">
+              <caret line="218" column="38" selection-start-line="218" selection-start-column="38" selection-end-line="218" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -73,11 +71,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/actors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="244" column="32" selection-start-line="241" selection-start-column="8" selection-end-line="244" selection-end-column="32" />
-              <folding>
-                <marker date="1572213800686" expanded="true" signature="8159:8299" ph="..." />
-              </folding>
+            <state relative-caret-position="247">
+              <caret line="269" column="55" selection-start-line="269" selection-start-column="55" selection-end-line="269" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -111,7 +106,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -123,6 +117,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -248,16 +243,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2990">
-          <caret line="208" column="38" selection-start-line="208" selection-start-column="38" selection-end-line="208" selection-end-column="38" />
-          <folding>
-            <marker date="1572206947605" expanded="true" signature="4495:4504" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
@@ -265,13 +250,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="551">
+          <caret line="218" column="38" selection-start-line="218" selection-start-column="38" selection-end-line="218" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/actors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="244" column="32" selection-start-line="241" selection-start-column="8" selection-end-line="244" selection-end-column="32" />
-          <folding>
-            <marker date="1572213800686" expanded="true" signature="8159:8299" ph="..." />
-          </folding>
+        <state relative-caret-position="247">
+          <caret line="269" column="55" selection-start-line="269" selection-start-column="55" selection-end-line="269" selection-end-column="55" />
         </state>
       </provider>
     </entry>
