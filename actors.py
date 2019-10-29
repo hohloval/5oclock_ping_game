@@ -245,6 +245,14 @@ class Ball(Actor):
             self._y += self._dy * dt
             self._dx = -self._dx
 
+            # check if the ball is coming up or coming down
+            if self._dy > 0:
+                self._dy = self.new_direction(-16, 0)[1]
+            elif self._dy < 0:
+                self._dy = self.new_direction(0, 16)[1]
+            else:
+                self._dy = self.new_direction(-16, 16)[1]
+
         # Check Collision with right paddle
         # coords = game.player2.get_coordinates()
         # dims = game.player2.get_dimensions()
