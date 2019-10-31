@@ -213,6 +213,8 @@ class Ball(Actor):
         new_x = self._x+self._dx
         new_y = self._y+self._dy
 
+        check_collision = self.check_collision(new_x, new_y)
+
         # Check collision with Top border
         if new_y - self._width <= self.y_bound[0]:
             self._x += self._dx * dt
@@ -226,6 +228,19 @@ class Ball(Actor):
             self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
             return
+            # Check collision with paddles
+        elif self.check_collision(new_x, new_y):
+            self._x = new_x
+            self._y = new_y
+            self._dx = -self._dx
+
+            # check if the ball is coming up or coming down
+            if self._dy > 0:
+                self._dy = self.new_direction(-16, 0)[1]
+            elif self._dy < 0:
+                self._dy = self.new_direction(0, 16)[1]
+            else:
+                self._dy = self.new_direction(-16, 16)[1]
 
         # Check Collision with left screen edge
         elif new_x - self._width <= self.x_bound[0]:
@@ -240,21 +255,6 @@ class Ball(Actor):
             self.game.new_round()
             self.game.set_go(False)
             return
-
-        # Check collision with paddles
-        elif self.check_collision(new_x, new_y)[0]:
-            self._x = new_x
-            self._y = new_y
-            # self._y += self._dy * dt
-            self._dx = -self._dx
-
-            # check if the ball is coming up or coming down
-            if self._dy > 0:
-                self._dy = self.new_direction(-16, 0)[1]
-            elif self._dy < 0:
-                self._dy = self.new_direction(0, 16)[1]
-            else:
-                self._dy = self.new_direction(-16, 16)[1]
 
         # Check Collision with right paddle
         # coords = game.player2.get_coordinates()
@@ -279,14 +279,14 @@ class Ball(Actor):
             for i in range(-self._height, self._height):
                 if isinstance(self.game.get_actor(new_x + self._width, new_y + i),
                            HumanPlayer):
-                    return [True, new_y + i]
-            return [False]
+                    return True
+            return False
         else:
             for i in range(-self._height, self._height):
                 if isinstance(self.game.get_actor(new_x - self._width, new_y + i),
                            HumanPlayer):
-                    return [True, new_y + i]
-            return [False]
+                    return True
+            return False
 
     def reset_pos(self):
         """
