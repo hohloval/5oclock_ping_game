@@ -218,31 +218,34 @@ class Ball(Actor):
             self._x += self._dx * dt
             self._y = self.y_bound[0]+self._height
             self._dy = -self._dy
+            return
 
         # Check Collision with bottom Border
         elif new_y + self._width >= self.y_bound[1]:
             self._x += self._dx * dt
             self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
+            return
 
         # Check Collision with left screen edge
-        if new_x - self._width <= self.x_bound[0]:
+        elif new_x - self._width <= self.x_bound[0]:
             self.game.player2.change_score(1)
             self.game.new_round()
             self.game.set_go(False)
+            return
 
         # Check Collision with right screen edge
         elif new_x + self._width >= self.x_bound[1]:
             self.game.player1.change_score(1)
             self.game.new_round()
             self.game.set_go(False)
+            return
 
         # Check collision with paddles
-        if isinstance(self.game.get_actor(new_x + self._width, new_y), HumanPlayer) or\
-            isinstance(self.game.get_actor(new_x - self._width, new_y), HumanPlayer):
-
+        elif self.check_collision(new_x, new_y)[0]:
             self._x = new_x
-            self._y += self._dy * dt
+            self._y = new_y
+            # self._y += self._dy * dt
             self._dx = -self._dx
 
             # check if the ball is coming up or coming down
@@ -264,10 +267,31 @@ class Ball(Actor):
 
         # No Collision
         else:
-            self._x += self._dx  * dt
-            self._y += self._dy  * dt
+            self._x += self._dx * dt
+            self._y += self._dy * dt
+
+    def check_collision(self, new_x: int, new_y: int):
+        """
+        Checks if the ball collides with a paddle and returns [True/False, pos
+        of collision]
+        """
+        if self._dx > 0:
+            for i in range(-self._height, self._height):
+                if isinstance(self.game.get_actor(new_x + self._width, new_y + i),
+                           HumanPlayer):
+                    return [True, new_y + i]
+            return [False]
+        else:
+            for i in range(-self._height, self._height):
+                if isinstance(self.game.get_actor(new_x - self._width, new_y + i),
+                           HumanPlayer):
+                    return [True, new_y + i]
+            return [False]
 
     def reset_pos(self):
+        """
+        Resets the position of the ball for a new round.
+        """
         self._x = self.game.d_w//2
         self._y = self.game.d_h//2
 
