@@ -1,6 +1,7 @@
 from __future__ import annotations
 import pygame
 import random
+import math
 # from game import Game
 from typing import Optional, Tuple, Union
 
@@ -197,6 +198,8 @@ class Ball(Actor):
         self._dx = None
         self._dy = None
         self.x_bound = x_bound
+        # self._edges = []
+        # self.get_edges()
 
     def draw(self) -> None:
         """
@@ -228,8 +231,13 @@ class Ball(Actor):
             self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
             return
-            # Check collision with paddles
-        elif self.check_collision(new_x, new_y):
+
+        # Check collision with paddles
+        # elif isinstance(self.game.get_actor(new_x + self._width, new_y), HumanPlayer) \
+        #         or isinstance(self.game.get_actor(new_x - self._width, new_y), HumanPlayer):
+        elif check_collision:
+            # self._x = int(check_collision[1][0])
+            # self._y = int(check_collision[1][1])
             self._x = new_x
             self._y = new_y
             self._dx = -self._dx
@@ -241,6 +249,20 @@ class Ball(Actor):
                 self._dy = self.new_direction(0, 16)[1]
             else:
                 self._dy = self.new_direction(-16, 16)[1]
+
+        # elif check_collision[0]:
+        #     self._x = int(check_collision[1][0])
+        #     self._y = int(check_collision[1][1])
+        #     self._dx = -self._dx
+        #
+        #     # check if the ball is coming up or coming down
+        #     if self._dy > 0:
+        #         self._dy = self.new_direction(-16, 0)[1]
+        #     elif self._dy < 0:
+        #         self._dy = self.new_direction(0, 16)[1]
+        #     else:
+        #         self._dy = self.new_direction(-16, 16)[1]
+
 
         # Check Collision with left screen edge
         elif new_x - self._width <= self.x_bound[0]:
@@ -270,23 +292,41 @@ class Ball(Actor):
             self._x += self._dx * dt
             self._y += self._dy * dt
 
-    def check_collision(self, new_x: int, new_y: int):
-        """
-        Checks if the ball collides with a paddle and returns [True/False, pos
-        of collision]
-        """
-        if self._dx > 0:
-            for i in range(-self._height, self._height):
-                if isinstance(self.game.get_actor(new_x + self._width, new_y + i),
-                           HumanPlayer):
+    def check_collision (self, new_x: int, new_y: int):
+        for h in range(-self._height, self._height+1):
+            if self._dx > 0:
+                if isinstance(self.game.get_actor(new_x + self._width, new_y + h), HumanPlayer):
                     return True
-            return False
-        else:
-            for i in range(-self._height, self._height):
-                if isinstance(self.game.get_actor(new_x - self._width, new_y + i),
-                           HumanPlayer):
+            else:
+                if isinstance(self.game.get_actor(new_x - self._width, new_y - h), HumanPlayer):
                     return True
-            return False
+        return False
+
+    # def check_collision(self, new_x: int, new_y: int):
+    #     """
+    #     Checks if the ball collides with a paddle and returns [True/False, pos
+    #     of collision]
+    #     """
+    #     if self._dx > 0:
+    #         for cord in self._edges:
+    #             if isinstance(self.game.get_actor(new_x + cord[0], new_y - cord[1]), HumanPlayer):
+    #                 return [True, (new_x + cord[0], new_y - cord[1])]
+    #             elif isinstance(self.game.get_actor(new_x + cord[0], new_y + cord[1]), HumanPlayer):
+    #                 return [True, new_x + cord[0], new_y + cord[1]]
+    #         return [False]
+    #     else:
+    #         for cord in self._edges:
+    #             if isinstance(self.game.get_actor(new_x - cord[0], new_y - cord[1]), HumanPlayer):
+    #                 return [True, (new_x - cord[0], new_y - cord[1])]
+    #             elif isinstance(self.game.get_actor(new_x - cord[0], new_y + cord[1]), HumanPlayer):
+    #                 return [True, (new_x - cord[0], new_y + cord[1])]
+    #         return [False]
+    #
+    # def get_edges(self):
+    #          for x in range(self._width + 1):
+    #              y = math.sqrt(self._width*self._width - x * x)
+    #              self._edges.append((x,round(y)))
+
 
     def reset_pos(self):
         """

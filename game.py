@@ -169,6 +169,7 @@ class Game:
                 self._running = False
         keys = pygame.key.get_pressed()
         if self._go:
+
             # player1 moves
             if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
                                      self.player1.get_speed() >= 0):
