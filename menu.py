@@ -3,6 +3,10 @@ from typing import Optional, List, Callable
 from game import Game
 import pygame
 
+black = (0, 0, 0)
+red = (255, 0, 0)
+white = (255, 255, 255)
+
 
 class MainMenu:
     """
@@ -11,15 +15,16 @@ class MainMenu:
     """
     _buttons: List[_Button]
     _game: Game
+    _surface: Surface
 
-    def __init__(self, game):
+    def __init__(self, game, size):
         """
         Initializes the menu and all of its buttons
         """
-        self._game = game;
-        self._buttons.append(_Button(400, 200, 100, 50,
-                                     "Two player game", None))
-
+        self._surface = pygame.display.set_mode(size)
+        self._game = game
+        self._buttons = [_Button(400, 200, 100, 50, "Two player game",
+                                 game.on_execute)]
 
     def display(self):
         """
@@ -28,16 +33,29 @@ class MainMenu:
 
         # Interaction loop
         while True:
+            pygame.display.update()
             self.draw_menu()
-            # check for player input (loop through buttons)
-            # if player clicks a button, run button.onClick
+            for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    # Check if mouse has clicked any buttons
+                    for button in self._buttons:
+                        if button.check_mouse_click(mouse_x, mouse_y):
+                            button.on_click()
+
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
 
     def draw_menu(self):
         """
         Draws everything to the screen
         """
-        for (button in self._buttons):
-            button.draw(self._game);
+        self._surface.fill(black)
+        for button in self._buttons:
+            button.draw(self._surface)
 
 
 class _Button:
@@ -49,7 +67,7 @@ class _Button:
     _width: int
     _height: int
     _label: str
-    _on_click: Callable
+    on_click: Callable
 
     def __init__(self, x, y, width, height, label, on_click):
         self._x = x
@@ -57,22 +75,25 @@ class _Button:
         self._width = width
         self._height = height
         self._label = label
-        self._on_click = on_click
+        self.on_click = on_click
 
-    def draw(self, game: Game):
+    def check_mouse_click(self, mouse_x: int, mouse_y: int):
+        """
+        Checks if the mouse click is on this button.
+        """
+        return (self._x <= mouse_x <= self._x + self._width) and \
+               (self._y <= mouse_y <= self._y + self._height)
+
+    def draw(self, surface: Surface):
         """
         Draws the button to the screen
         """
-
-        # Useful colour name variables
-        blue = pygame.Color((0, 0, 255))
-        white = pygame.Color((255, 255, 255))
 
         # Setting up label text
         font = pygame.font.Font(None, 14)
         button_label = font.render(self._label, True, white)
 
         # Drawing to screen
-        pygame.draw.rect(game.screen, blue, (self._x, self._y, self._width,
-                                             self._height))
-        game.screen.blit(button_label, (self._x, self._y))
+        pygame.draw.rect(surface, red, (self._x, self._y, self._width,
+                                         self._height))
+        surface.blit(button_label, (self._x, self._y))

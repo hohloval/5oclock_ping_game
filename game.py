@@ -135,9 +135,7 @@ class Game:
         """
         Initialize this game.
         """
-        pygame.init()
         self._running = True
-        pygame.display.set_caption("PING")
 
         self.new_round()
 
