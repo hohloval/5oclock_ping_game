@@ -23,8 +23,10 @@ class MainMenu:
         """
         self._surface = pygame.display.set_mode(size)
         self._game = game
-        self._buttons = [_Button(400, 200, 100, 50, "Two player game",
-                                 game.on_execute)]
+
+        mid_pos = (size[0] // 2, size[1] // 2)
+        self._buttons = [_Button(mid_pos[0] - 100, mid_pos[1] - 50, red, 200,
+                                 70, "Two player game", game.on_execute)]
 
     def display(self):
         """
@@ -42,7 +44,7 @@ class MainMenu:
 
                     # Check if mouse has clicked any buttons
                     for button in self._buttons:
-                        if button.check_mouse_click(mouse_x, mouse_y):
+                        if button.check_mouse_pos(mouse_x, mouse_y):
                             button.on_click()
 
                 if event.type == pygame.QUIT:
@@ -53,9 +55,17 @@ class MainMenu:
         """
         Draws everything to the screen
         """
+        size = self._surface.get_size()
+        mid_pos = (size[0] // 2, size[1] // 2)
+
         self._surface.fill(black)
+
         for button in self._buttons:
             button.draw(self._surface)
+
+        font = pygame.font.Font(None, 108)
+        title = font.render("P I N G", True, white)
+        self._surface.blit(title, (mid_pos[0] - title.get_size()[0]//2, 70))
 
 
 class _Button:
@@ -69,17 +79,20 @@ class _Button:
     _label: str
     on_click: Callable
 
-    def __init__(self, x, y, width, height, label, on_click):
+    def __init__(self, x: int, y: int, colour: tuple, width: int, height: int,
+                 label: str, on_click: Callable):
         self._x = x
         self._y = y
+        self.colour = colour
         self._width = width
         self._height = height
         self._label = label
         self.on_click = on_click
 
-    def check_mouse_click(self, mouse_x: int, mouse_y: int):
+    def check_mouse_pos(self, mouse_x: int, mouse_y: int):
         """
         Checks if the mouse click is on this button.
+        :return boolean
         """
         return (self._x <= mouse_x <= self._x + self._width) and \
                (self._y <= mouse_y <= self._y + self._height)
@@ -90,10 +103,15 @@ class _Button:
         """
 
         # Setting up label text
-        font = pygame.font.Font(None, 14)
+        font = pygame.font.Font(None, 24)
         button_label = font.render(self._label, True, white)
+        label_size = button_label.get_size()
+        offset_x = (self._width - label_size[0])//2
+        offset_y = (self._height - label_size[1])//2
 
         # Drawing to screen
-        pygame.draw.rect(surface, red, (self._x, self._y, self._width,
-                                         self._height))
-        surface.blit(button_label, (self._x, self._y))
+        pygame.draw.rect(surface, self.colour, (self._x, self._y, self._width,
+                                                self._height))
+
+        surface.blit(button_label, (self._x + offset_x,
+                                    self._y + offset_y))
