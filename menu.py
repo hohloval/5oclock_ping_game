@@ -27,6 +27,14 @@ class MainMenu:
         mid_pos = (size[0] // 2, size[1] // 2)
         self._buttons = [_Button(mid_pos[0] - 100, mid_pos[1] - 50, red, 200,
                                  70, "Two player game", game.on_execute)]
+        # choose point limit
+        # TODO: display current point limit
+
+        self._buttons = [_Button(mid_pos[0] - 100, mid_pos[1] - 50, red, 200,
+                                 70, "Two player game", game.on_execute)]
+        self._buttons = [_Button(mid_pos[0] - 100, mid_pos[1] - 50, red, 200,
+                                 70, "Two player game", game.on_execute)]
+        # display high scores
 
     def display(self):
         """
