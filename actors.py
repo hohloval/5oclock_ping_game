@@ -1,6 +1,7 @@
 from __future__ import annotations
 import pygame
 import random
+
 # from game import Game
 from typing import Optional, Tuple, Union
 
@@ -41,7 +42,8 @@ class Actor:
     _color: Tuple[int]
     _speed: int
 
-    def __init__(self, x, y, width, height, y_bound):
+
+    def __init__(self, x, y, width, height, y_bound, game):
         """
         Initialize an actor with the given <x> and <y> position and
         <width>x<height> dimensions on the game's stage.
@@ -49,19 +51,20 @@ class Actor:
         self._x, self._y, self._width, self._height = x, y, width, height
         self._color = WHITE
         self.y_bound = y_bound
+        self.game = game
 
-    def move(self, game: 'Game') -> None:
+    def move(self, dt: float) -> None:
         """
         Move this actor.
         """
 
         raise NotImplementedError
 
-    def draw(self, game: 'Game') -> None:
+    def draw(self) -> None:
         """
         Draw this actor on the stage.
         """
-        pygame.draw.rect(game.screen, self._color, (self._x, self._y,
+        pygame.draw.rect(self.game.screen, self._color, (int(self._x), int(self._y),
                                                     self._width, self._height))
 
     def get_coordinates(self) -> Tuple[int, int]:
@@ -99,14 +102,19 @@ class HumanPlayer(Actor):
     _speed: int
     _score: int
 
-    def __init__(self, x: int, y: int, y_bound) -> None:
+    def __init__(self, x: int, y: int, y_bound, game: 'Game') -> None:
         """
         Initialize a HumanPlayer at the position <x> and <y> on the stage.
         """
-
-        super().__init__(x, y, 15, 80, y_bound)
+        super().__init__(x, y, 15, 80, y_bound, game)
         self._speed = 10
         self._score = 0
+
+    def reset_pos(self) -> None:
+        """
+        Set the position of the bar by changing the self._x and self._y values.
+        """
+        self._y = (self.game.d_h//2) - 40
 
     def get_score(self) -> int:
         """
@@ -115,14 +123,19 @@ class HumanPlayer(Actor):
 
         return self._score
 
-    def move(self, direction: str) -> None:
+    def move(self, direction: str, dt: float) -> None:
         """
         Move the human player on the <game>'s stage based on direction.
         """
         if (direction == "up") and (self._y-self._speed) >= self.y_bound[0]:
-            self._y -= self._speed
+            self._y -= self._speed * dt
         elif (direction == "down") and ((self._y+self._height)+self._speed)<=self.y_bound[1]:
-            self._y += self._speed
+            self._y += self._speed * dt
+
+    def change_score(self, change_in_score: int):
+        self._score += change_in_score
+
+
 
     def change_score(self, change_in_score: int):
         self._score += change_in_score
@@ -150,12 +163,12 @@ class AIPlayer(Actor):
     _speed: int
     _score: int
 
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, game: 'Game') -> None:
         """
         Initialize an AI Player at the position <x> and <y> on the stage.
         """
 
-        super().__init__(x, y, 10, 10)
+        super().__init__(x, y, 10, 10, game)
         self.velocity = 10
 
     def get_score(self) -> int:
@@ -166,7 +179,7 @@ class AIPlayer(Actor):
         return self._score
 
     # TODO: implement
-    def move(self, game: 'Game') -> None:
+    def move(self) -> None:
         """
         Move the player on the <game>'s stage.
         """
@@ -185,66 +198,97 @@ class Ball(Actor):
     _height: int
     _color: str
 
-    def __init__(self, x: int, y: int, y_bound, x_bound) -> None:
+    def __init__(self, x: int, y: int, y_bound: list[int] , x_bound: list[int], game: 'Game') -> None:
         """
         Initialize a ball with the given x and y position
         """
-        super().__init__(x, y, 18, 18, y_bound)
+        super().__init__(x, y, 18, 18, y_bound, game)
         self._color = RED
         # self._range_of_dx = range(-4,4)
         # self._range_of_dy = range(-4,4)
         self._dx = None
         self._dy = None
         self.x_bound = x_bound
+        # self._edges = []
+        # self.get_edges()
 
-    def draw(self, game: 'Game') -> None:
+    def draw(self) -> None:
         """
         Draws the ball to the screen.
         """
-        pygame.draw.circle(game.screen, self._color, (self._x, self._y),
+        pygame.draw.circle(self.game.screen, self._color, (int(self._x), int(self._y)),
                            self._width)
     # TODO: implement
 
-    def move(self, game: 'Game') -> None:
+
+    def move(self, dt: float) -> None:
         """
         Move the ball on the <game>'s stage based.
         """
         new_x = self._x+self._dx
         new_y = self._y+self._dy
 
+        check_collision = self.check_collision(new_x, new_y)
+
         # Check collision with Top border
         if new_y - self._width <= self.y_bound[0]:
-            self._x += self._dx
+            self._x += self._dx * dt
             self._y = self.y_bound[0]+self._height
             self._dy = -self._dy
+            return
 
         # Check Collision with bottom Border
         elif new_y + self._width >= self.y_bound[1]:
-            self._x += self._dx
+            self._x += self._dx * dt
             self._y = self.y_bound[1]-self._height
             self._dy = -self._dy
+            return
+
+        # Check collision with paddles
+        # elif isinstance(self.game.get_actor(new_x + self._width, new_y), HumanPlayer) \
+        #         or isinstance(self.game.get_actor(new_x - self._width, new_y), HumanPlayer):
+        elif check_collision:
+            # self._x = int(check_collision[1][0])
+            # self._y = int(check_collision[1][1])
+            self._x = new_x
+            self._y = new_y
+            self._dx = -self._dx
+
+            # check if the ball is coming up or coming down
+            if self._dy > 0:
+                self._dy = self.new_direction(-16, 0)[1]
+            elif self._dy < 0:
+                self._dy = self.new_direction(0, 16)[1]
+            else:
+                self._dy = self.new_direction(-16, 16)[1]
+
+        # elif check_collision[0]:
+        #     self._x = int(check_collision[1][0])
+        #     self._y = int(check_collision[1][1])
+        #     self._dx = -self._dx
+        #
+        #     # check if the ball is coming up or coming down
+        #     if self._dy > 0:
+        #         self._dy = self.new_direction(-16, 0)[1]
+        #     elif self._dy < 0:
+        #         self._dy = self.new_direction(0, 16)[1]
+        #     else:
+        #         self._dy = self.new_direction(-16, 16)[1]
+
 
         # Check Collision with left screen edge
-        if new_x - self._width <= self.x_bound[0]:
-            game.player2.change_score(1)
-            # self._x = game.d_w//2
-            # self._y = game.d_h//2
-            game.new_round()
-            game.set_go(False)
+        elif new_x - self._width <= self.x_bound[0]:
+            self.game.player2.change_score(1)
+            self.game.new_round()
+            self.game.set_go(False)
+            return
 
         # Check Collision with right screen edge
         elif new_x + self._width >= self.x_bound[1]:
-            game.player1.change_score(1)
-            # self._x = game.d_w//2
-            # self._y = game.d_h//2
-            game.new_round()
-            game.set_go(False)
-
-        # Check collision with paddles
-        if isinstance(game.get_actor(new_x, new_y), HumanPlayer):
-            self._x = new_x
-            self._y += self._dy
-            self._dx = -self._dx
+            self.game.player1.change_score(1)
+            self.game.new_round()
+            self.game.set_go(False)
+            return
 
         # Check Collision with right paddle
         # coords = game.player2.get_coordinates()
@@ -257,23 +301,69 @@ class Ball(Actor):
 
         # No Collision
         else:
-            self._x += self._dx
-            self._y += self._dy
+            self._x += self._dx * dt
+            self._y += self._dy * dt
 
-    def init_move(self, game: 'Game') -> None:
+    def check_collision (self, new_x: int, new_y: int):
+        for h in range(-self._height, self._height+1):
+            if self._dx > 0:
+                if isinstance(self.game.get_actor(new_x + self._width, new_y + h), HumanPlayer):
+                    return True
+            else:
+                if isinstance(self.game.get_actor(new_x - self._width, new_y - h), HumanPlayer):
+                    return True
+        return False
+
+    # def check_collision(self, new_x: int, new_y: int):
+    #     """
+    #     Checks if the ball collides with a paddle and returns [True/False, pos
+    #     of collision]
+    #     """
+    #     if self._dx > 0:
+    #         for cord in self._edges:
+    #             if isinstance(self.game.get_actor(new_x + cord[0], new_y - cord[1]), HumanPlayer):
+    #                 return [True, (new_x + cord[0], new_y - cord[1])]
+    #             elif isinstance(self.game.get_actor(new_x + cord[0], new_y + cord[1]), HumanPlayer):
+    #                 return [True, new_x + cord[0], new_y + cord[1]]
+    #         return [False]
+    #     else:
+    #         for cord in self._edges:
+    #             if isinstance(self.game.get_actor(new_x - cord[0], new_y - cord[1]), HumanPlayer):
+    #                 return [True, (new_x - cord[0], new_y - cord[1])]
+    #             elif isinstance(self.game.get_actor(new_x - cord[0], new_y + cord[1]), HumanPlayer):
+    #                 return [True, (new_x - cord[0], new_y + cord[1])]
+    #         return [False]
+    #
+    # def get_edges(self):
+    #          for x in range(self._width + 1):
+    #              y = math.sqrt(self._width*self._width - x * x)
+    #              self._edges.append((x,round(y)))
+
+
+    def reset_pos(self):
+        """
+        Resets the position of the ball for a new round.
+        """
+        self._x = self.game.d_w//2
+        self._y = self.game.d_h//2
+
+    def init_move(self) -> None:
         """
         Is the initial movement of the ball at the beginning of the round.
         """
-        self._dx, self._dy = self.new_direction()
+        self._dy = self.new_direction(-16, 16)[1]
+        self._dx = random.choice([-10, 10])
 
-    def new_direction(self) -> Tuple[int, int]:
+    def new_direction(self, lower: int, upper: int) -> Tuple[int, int]:
         """
         Calculates a randomized direction of movement for the ball, that is
         dx and dy.
-
+        lower: The lower bound for the change in y direction
+        upper: the upper bound for the change in the y direction
         return a tuple containing x, and y coordinates for the new direction
         """
-        y = random.randint(-8, 8)
+        y = random.randint(lower, upper)
+
         x = 10
         # if x in range(-1, 1):
         #     x = 2
@@ -290,19 +380,71 @@ class Boundaries(Actor):
     _height: int
     _color: Tuple[int]
 
-    def __init__(self, x: int, y: int, width: int, height: int, y_bound) ->None:
-        super().__init__(x, y, width , height, y_bound )
+
+    def __init__(self, x: int, y: int, width: int, height: int, y_bound: list[int], game:'Game' ) ->None:
+        super().__init__(x, y, width, height, y_bound, game)
         self._color = RED
 
-    def draw(self, game: 'Game') -> None:
+    def draw(self) -> None:
         """
         Draws the ball to the screen.
         """
-        pygame.draw.rect(game.screen, self._color, (self._x, self._y,
+        pygame.draw.rect(self.game.screen, self._color, (self._x, self._y,
                                                     self._width, self._height))
 
-    def move(self, game: 'Game'):
+    def move(self):
         return
+
+
+class Message(Actor):
+    """
+    A Message of text that displays on the game screen
+    """
+    _x: int
+    _y: int
+    _width: int
+    _height: int
+    _color: Tuple[int]
+    _speed: int
+    _text: str
+    _is_drawn: bool
+
+    def __init__(self, x, y, width, height, y_bound, game, text, is_shown):
+        """
+        Initialize an actor with the given <x> and <y> position and
+        <width>x<height> dimensions on the game's stage.
+        """
+        super().__init__(x, y, width, height, y_bound, game)
+        self._color = (81, 194, 231)
+        self.y_bound = y_bound
+        self.game = game
+        self._text = text
+        self._is_drawn = is_shown
+
+    def set_drawn(self, cond: bool):
+        """
+        Sets this text to be drawn, or not based on the condition
+
+        cond: the condition on whether this object is displayed
+        """
+        self._is_drawn = cond
+
+    def draw(self):
+        """
+        Draw the text to the screen if the message is supposed to
+        be drawn
+        """
+        if self._is_drawn:
+            font = pygame.font.Font(None, 70)
+            text = font.render(self._text, 1, self._color)
+            text_pos = text.get_rect(centerx=self._x, centery=self._y)
+            self.game.screen.blit(text, text_pos)
+
+    def move(self):
+        """
+        This actor cannot be moved
+        """
+        pass
 
 
 class ScoreBoard(Actor):
@@ -319,22 +461,23 @@ class ScoreBoard(Actor):
     _player: Union[HumanPlayer, AIPlayer]
 
     def __init__(self, x: int, y: int, width: int, height: int, y_bound,
-                 player: Union[HumanPlayer, AIPlayer]) -> None:
-        super().__init__(x, y, width, height, y_bound)
+                 player: Union[HumanPlayer, AIPlayer], game:'Game') -> None:
+        super().__init__(x, y, width, height, y_bound, game)
         self._color = WHITE
         self._score = 0
         self._player = player
 
-    def draw(self, game: 'Game') -> None:
+
+    def draw(self) -> None:
         """
         Draws the score to the screen.
         """
         font = pygame.font.Font(None, 70)
         text = font.render(str(self._score), 1, self._color)
         text_pos = text.get_rect(centerx=self._x, centery=self._y)
-        game.screen.blit(text, text_pos)
+        self.game.screen.blit(text, text_pos)
 
-    def move(self, game: 'Game'):
+    def move(self):
         return
 
     def update(self):
