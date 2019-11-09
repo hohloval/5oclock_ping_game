@@ -101,7 +101,18 @@ class Game:
         return None
 
     def set_goal(self, score: int):
-        this.goal_score = score
+        self.goal_score = score
+
+    def increase_goal(self):
+        self.goal_score += 1
+
+    def decrease_goal(self):
+        if self.goal_score >= 1:
+            self.goal_score -= 1
+
+    def toggle_infinite(self):
+        # TODO: toggle infinite gameplay
+        pass
 
     def set_go(self, switch: bool) -> None:
         self._go = switch
