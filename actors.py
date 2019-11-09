@@ -42,7 +42,6 @@ class Actor:
     _color: Tuple[int]
     _speed: int
 
-
     def __init__(self, x, y, width, height, y_bound, game):
         """
         Initialize an actor with the given <x> and <y> position and
@@ -133,11 +132,10 @@ class HumanPlayer(Actor):
             self._y += self._speed * dt
 
     def change_score(self, change_in_score: int):
-        self._score += change_in_score
-
-
-
-    def change_score(self, change_in_score: int):
+        """
+        Change the score for this player
+        change_in_score: an int, which will be added to the current score
+        """
         self._score += change_in_score
 
     def reset(self, game: 'Game'):
@@ -218,8 +216,6 @@ class Ball(Actor):
         """
         pygame.draw.circle(self.game.screen, self._color, (int(self._x), int(self._y)),
                            self._width)
-    # TODO: implement
-
 
     def move(self, dt: float) -> None:
         """
@@ -339,7 +335,6 @@ class Ball(Actor):
     #              y = math.sqrt(self._width*self._width - x * x)
     #              self._edges.append((x,round(y)))
 
-
     def reset_pos(self):
         """
         Resets the position of the ball for a new round.
@@ -379,7 +374,6 @@ class Boundaries(Actor):
     _width: int
     _height: int
     _color: Tuple[int]
-
 
     def __init__(self, x: int, y: int, width: int, height: int, y_bound: list[int], game:'Game' ) ->None:
         super().__init__(x, y, width, height, y_bound, game)
@@ -466,7 +460,6 @@ class ScoreBoard(Actor):
         self._color = WHITE
         self._score = 0
         self._player = player
-
 
     def draw(self) -> None:
         """
