@@ -34,12 +34,24 @@ class Game:
         x_bound:
             The horizontal [upper, lower] bounds of the moving actors(players
                                                                       and ball)
-        self.upper_bound:
+        start_message:
+            The message displayed to the user when at the beginning of any new
+                                                                        round.
+        pause_message:
+            The message displayed to the user when the game is paused
+        upper_bound:
             The upper bar of the stage
-        self.lower_bound:
+        lower_bound:
             The lower bar of the stage
 
         === Private Attributes ===
+        _pause:
+            True if the game is paused, false otherwise
+        _game_begun:
+            True if the game just begun, false otherwise
+        _new_round:
+            True if there is new round but has not yet been started, false
+            if it has been started.
         _running:
             Whether or not the game is running.
         _actors:
@@ -63,7 +75,6 @@ class Game:
     start_message: Message
     pause_message: Message
     infinite_mode: bool
-
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -89,7 +100,6 @@ class Game:
         self._game_begun = False
         self._new_round = True
 
-    # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
         """
         Return the actor object that exists in the location given by
@@ -137,7 +147,7 @@ class Game:
     def new_round(self):
         """
         Reset the stage for the new round. If this the beginning of the game,
-        creat new players and ball, else just reset the position.
+        create new players and ball, else just reset the position.
         """
         if self._game_begun is False:
             d_h, d_w = self.d_h, self.d_w
@@ -158,9 +168,9 @@ class Game:
 
             self.start_message = Message(d_w // 2, d_h // 2, 50, 50,
                                          0, self, "Press SPACE to start", True)
-            self.pause_message = Message(d_w // 2, d_h // 2, 50, 50,
-                                         0, self, "Game Paused - Press 'r' to resume", False)
-
+            self.pause_message = Message(d_w // 2, d_h // 2, 50, 50,0, self,
+                                         "Game Paused - Press 'r' to resume",
+                                         False)
             self._actors = []
             self._actors.extend([self.player1, self.player2, self.ball,
                                  self.upper_bound, self.lower_bound,
@@ -172,7 +182,6 @@ class Game:
             self.player2.reset_pos()
             self.ball.reset_pos()
             self.start_message.set_drawn(True)
-
 
     def on_init(self) -> None:
         """
@@ -191,7 +200,7 @@ class Game:
                 self._running = False
         keys = pygame.key.get_pressed()
 
-        #Case when a round is ongoing and is not paused
+        #Case when a round is on-going and is not paused.
         if not self._pause and not self._new_round:
             # player1 moves
             if keys[pygame.K_p]:
@@ -218,7 +227,7 @@ class Game:
 
             self.ball.move(dt)
 
-        #Case when user has paused the game
+        #Case when user has paused the game.
         elif not self._new_round:
             if keys[pygame.K_r]:
                 self._pause = False
@@ -226,7 +235,7 @@ class Game:
                 self.pause_message.set_drawn(False)
                 self.ball.move(dt)
 
-        #Case when its a new round
+        #Case when its a new round that has not yet been started.
         else:
             if keys[pygame.K_SPACE]:
                 self._game_begun = True
@@ -256,12 +265,12 @@ class Game:
 
             y = 6
             for i in range(0, 20):
-                pygame.draw.rect(self.screen, WHITE, ((display_width//2)-1, y, 2, 24))
+                pygame.draw.rect(self.screen, WHITE, ((display_width//2)-1, y,
+                                                      2, 24))
                 y += 36
 
             for actor in self._actors:
                 actor.draw()
-
 
             # Update ScoreBoards:
             self.board_player1.update()
