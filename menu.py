@@ -28,12 +28,12 @@ class MainMenu:
         self._buttons = [Button(mid_pos[0] - 100, mid_pos[1] - 50, red, 200,
                                 70, "Two player game", game.on_execute)]
         # choose point limit
-        self._buttons.append(Button(mid_pos[0], mid_pos[1] + 50, red, 30,
-                                    30, "up", game.increase_goal))
-        self._buttons.append(Button(mid_pos[0] + 40, mid_pos[1] + 50, red, 50,
-                                    30, "down", game.decrease_goal))
-        self._buttons.append(Button(mid_pos[0] - 20, mid_pos[1] + 90, red, 120,
-                                    30, "infinite mode", game.toggle_infinite))
+        self._buttons.append(Button(mid_pos[0] + 20, mid_pos[1] + 50, red, 30,
+                                    30, "Up", game.increase_goal))
+        self._buttons.append(Button(mid_pos[0] + 60, mid_pos[1] + 50, red, 50,
+                                    30, "Down", game.decrease_goal))
+        self._buttons.append(Button(mid_pos[0] - 10, mid_pos[1] + 90, red, 120,
+                                    30, "Infinite mode", game.toggle_infinite))
 
         # display high scores
 
@@ -41,7 +41,6 @@ class MainMenu:
         """
         Displays the menu to the player
         """
-
         # Interaction loop
         while True:
             pygame.display.update()
@@ -75,6 +74,19 @@ class MainMenu:
         font = pygame.font.Font(None, 108)
         title = font.render("P I N G", True, white)
         self._surface.blit(title, (mid_pos[0] - title.get_size()[0]//2, 70))
+
+        font = pygame.font.Font(None, 28)
+        goal_label = font.render("Score Limit", True, white)
+        self._surface.blit(goal_label, (mid_pos[0] - 120, mid_pos[1] + 60))
+
+        if self._game.infinite_mode:
+            font = pygame.font.Font(None, 28)
+            goal_label = font.render("infinite", True, white)
+            self._surface.blit(goal_label, (mid_pos[0] - 120, mid_pos[1] + 80))
+        else:
+            font = pygame.font.Font(None, 36)
+            goal_label = font.render(str(self._game.goal_score), True, white)
+            self._surface.blit(goal_label, (mid_pos[0]-80, mid_pos[1]+80))
 
 
 class Button:
