@@ -110,8 +110,8 @@ class Game:
         if self.goal_score >= 1:
             self.goal_score -= 1
 
-    def set_infinite(self):
-        # TODO:Set infinite gameplay mode to true
+    def toggle_infinite(self):
+        # TODO: toggle infinite gameplay
         pass
 
     def set_go(self, switch: bool) -> None:

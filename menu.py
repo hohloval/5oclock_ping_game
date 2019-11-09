@@ -29,10 +29,13 @@ class MainMenu:
                                  70, "Two player game", game.on_execute)]
         # choose point limit
 
-        self._buttons.append(Button(mid_pos[0] - 100, mid_pos[1], red, 40,
-                                    40, "^", game.set_goal))
-        self._buttons.append(Button(mid_pos[0], mid_pos[1], red, 40,
-                                    40, "v", game.set_goal))
+        self._buttons.append(Button(mid_pos[0], mid_pos[1] + 50, red, 30,
+                                    30, "up", game.increase_goal))
+        self._buttons.append(Button(mid_pos[0] + 40, mid_pos[1] + 50, red, 50,
+                                    30, "down", game.decrease_goal))
+        self._buttons.append(Button(mid_pos[0] - 20, mid_pos[1] + 90, red, 120,
+                                    30, "infinite mode", game.toggle_infinite))
+
         # display high scores
 
     def display(self):
