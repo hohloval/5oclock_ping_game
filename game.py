@@ -61,6 +61,7 @@ class Game:
     board_player1: ScoreBoard
     board_player2: ScoreBoard
     start_message: Message
+    infinite_mode: boolean
 
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
@@ -83,6 +84,7 @@ class Game:
         self.y_bound = None
         self.start_pos = True
         self.clock = pygame.time.Clock()
+        self.infinite_mode = False
 
     # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
@@ -107,12 +109,11 @@ class Game:
         self.goal_score += 1
 
     def decrease_goal(self):
-        if self.goal_score >= 1:
+        if self.goal_score > 1:
             self.goal_score -= 1
 
     def toggle_infinite(self):
-        # TODO: toggle infinite gameplay
-        pass
+        self.infinite_mode = not self.infinite_mode
 
     def set_go(self, switch: bool) -> None:
         self._go = switch

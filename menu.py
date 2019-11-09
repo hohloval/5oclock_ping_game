@@ -81,15 +81,13 @@ class MainMenu:
         goal_label = font.render("Score Limit", True, white)
         self._surface.blit(goal_label, (mid_pos[0] - 120, mid_pos[1] + 60))
 
-        # get goal score
-        limit = self._game.goal_score
-        if limit == 0:
+        if self._game.infinite_mode:
             font = pygame.font.Font(None, 28)
             goal_label = font.render("infinite", True, white)
             self._surface.blit(goal_label, (mid_pos[0] - 120, mid_pos[1] + 80))
         else:
             font = pygame.font.Font(None, 36)
-            goal_label = font.render(str(limit), True, white)
+            goal_label = font.render(str(self._game.goal_score), True, white)
             self._surface.blit(goal_label, (mid_pos[0]-80, mid_pos[1]+80))
 
 
