@@ -101,7 +101,7 @@ class Game:
         return None
 
     def set_goal(self, score: int):
-        this.goal_score = score
+        self.goal_score = score
 
     def set_go(self, switch: bool) -> None:
         self._go = switch
