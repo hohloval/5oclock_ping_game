@@ -280,14 +280,14 @@ class Ball(Actor):
         elif new_x - self._width <= self.x_bound[0]:
             self.game.player2.change_score(1)
             self.game.new_round()
-            self.game.set_go(False)
+            self.game.set_new_round(True)
             return
 
         # Check Collision with right screen edge
         elif new_x + self._width >= self.x_bound[1]:
             self.game.player1.change_score(1)
             self.game.new_round()
-            self.game.set_go(False)
+            self.game.set_new_round(True)
             return
 
         # Check Collision with right paddle

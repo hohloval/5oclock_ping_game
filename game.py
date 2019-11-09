@@ -61,7 +61,8 @@ class Game:
     board_player1: ScoreBoard
     board_player2: ScoreBoard
     start_message: Message
-    infinite_mode: boolean
+    pause_message: Message
+    infinite_mode: bool
 
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
@@ -78,13 +79,15 @@ class Game:
         self.upper_bound = None
         self.lower_bound = None
         self._actors = []
-        self._go = False
+        self._pause = True
         self.d_w, self.d_h = pygame.display.get_surface().get_size()
         self.x_bound = [0, self.d_w]
         self.y_bound = None
         self.start_pos = True
         self.clock = pygame.time.Clock()
         self.infinite_mode = False
+        self._game_begun = False
+        self._new_round = True
 
     # TODO: Check if works properly.
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
@@ -116,8 +119,11 @@ class Game:
     def toggle_infinite(self):
         self.infinite_mode = not self.infinite_mode
 
-    def set_go(self, switch: bool) -> None:
-        self._go = switch
+    def set_pause(self, switch: bool) -> None:
+        self._pause = switch
+
+    def set_new_round(self, switch: bool) -> None:
+        self._new_round = switch
 
     def game_won(self) -> bool:
         """
@@ -133,8 +139,7 @@ class Game:
         Reset the stage for the new round. If this the beginning of the game,
         creat new players and ball, else just reset the position.
         """
-        if self._go is False:
-            # DO WE NEED TO DO THIS FOR EVERY FRAME?
+        if self._game_begun is False:
             d_h, d_w = self.d_h, self.d_w
             h_bars = round(d_h * 0.05)
             self.y_bound = [h_bars, d_h - h_bars]
@@ -146,19 +151,21 @@ class Game:
             self.lower_bound = Boundaries(0, d_h - h_bars, d_w, h_bars,
                                           self.y_bound, self)
 
-            self.board_player1 = ScoreBoard(self.d_w // 3, 450, 50, 50, 0,
+            self.board_player1 = ScoreBoard(d_w // 3, 450, 50, 50, 0,
                                             self.player1, self)
-            self.board_player2 = ScoreBoard(2 * self.d_w // 3, 450, 50, 50, 0,
+            self.board_player2 = ScoreBoard(2 * d_w // 3, 450, 50, 50, 0,
                                             self.player2, self)
 
-            self.start_message = Message(self.d_w // 2, self.d_h // 2, 50, 50,
+            self.start_message = Message(d_w // 2, d_h // 2, 50, 50,
                                          0, self, "Press SPACE to start", True)
+            self.pause_message = Message(d_w // 2, d_h // 2, 50, 50,
+                                         0, self, "Game Paused - Press 'r' to resume", False)
 
             self._actors = []
             self._actors.extend([self.player1, self.player2, self.ball,
                                  self.upper_bound, self.lower_bound,
                                  self.board_player1, self.board_player2,
-                                 self.start_message])
+                                 self.start_message, self.pause_message])
 
         else:
             self.player1.reset_pos()
@@ -175,7 +182,6 @@ class Game:
         pygame.display.set_caption("PING")
         self.new_round()
 
-
     def on_move(self, dt: float) -> None:
         """
         Move every object on the stage while this game is on execute.
@@ -184,8 +190,14 @@ class Game:
             if event.type == pygame.QUIT:
                 self._running = False
         keys = pygame.key.get_pressed()
-        if self._go:
+
+        #Case when a round is ongoing and is not paused
+        if not self._pause and not self._new_round:
             # player1 moves
+            if keys[pygame.K_p]:
+                self._pause = True
+                self.pause_message.set_drawn(True)
+                return
             if keys[pygame.K_w] and (self.player1.get_coordinates()[1] -
                                      self.player1.get_speed() >= 0):
                 self.player1.move("up", dt)
@@ -203,21 +215,25 @@ class Game:
                                         self.player2.get_dimensions()[1] +
                                         self.player2.get_speed() <= 720):
                 self.player2.move("down", dt)
-            # if keys[pygame.K_SPACE]:
-            #     self._go = False
-
-            # ball moves
 
             self.ball.move(dt)
 
-            # if keys[pygame.K_r]:
-            #     self.ball.
+        #Case when user has paused the game
+        elif not self._new_round:
+            if keys[pygame.K_r]:
+                self._pause = False
+                self.start_message.set_drawn(False)
+                self.pause_message.set_drawn(False)
+                self.ball.move(dt)
+
+        #Case when its a new round
         else:
             if keys[pygame.K_SPACE]:
+                self._game_begun = True
+                self._new_round = False
+                self._pause = False
                 self.start_message.set_drawn(False)
-                self._go = True
                 self.ball.init_move()
-
 
     def on_execute(self) -> None:
         """
@@ -227,6 +243,7 @@ class Game:
         self.on_init()
         # run the game
         while self._running:
+
             dt = self.clock.tick() / 30
             # print(self.clock.get_fps())
             # move objects on the stage
