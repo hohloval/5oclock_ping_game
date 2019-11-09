@@ -106,10 +106,11 @@ class Game:
         self.goal_score = score
 
     def increase_goal(self):
-        self.goal_score += 1
+        if not self.infinite_mode:
+            self.goal_score += 1
 
     def decrease_goal(self):
-        if self.goal_score > 1:
+        if self.goal_score > 1 and not self.infinite_mode:
             self.goal_score -= 1
 
     def toggle_infinite(self):
