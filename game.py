@@ -103,6 +103,13 @@ class Game:
     def set_goal(self, score: int):
         self.goal_score = score
 
+    def increase_goal(self):
+        self.goal_score += 1
+
+    def decrease_goal(self):
+        if self.goal_score >= 1:
+            self.goal_score -= 1
+
     def set_go(self, switch: bool) -> None:
         self._go = switch
 
