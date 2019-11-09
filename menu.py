@@ -76,7 +76,7 @@ class MainMenu:
         self._surface.blit(title, (mid_pos[0] - title.get_size()[0]//2, 70))
 
 
-class _Button:
+class Button:
     """
     A button the user can click on to make something happen
     """
@@ -117,9 +117,9 @@ class _Button:
         offset_x = (self._width - label_size[0])//2
         offset_y = (self._height - label_size[1])//2
 
-        # Drawing to screen
+        # Drawing button to screen
         pygame.draw.rect(surface, self.colour, (self._x, self._y, self._width,
                                                 self._height))
-
+        # Draw label centered in button
         surface.blit(button_label, (self._x + offset_x,
                                     self._y + offset_y))
