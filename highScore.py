@@ -32,11 +32,13 @@ class HighScore:
         self._score_file = score_file
         self._get_score()
 
+    #TODO: implement this method
     def draw(self) -> None:
         """
         Draw the high score onto the game screen
         """
 
+    #TODO: check if this method works
     def store_score(self, score) -> None:
         """
         Store the given score in the file by over-riding the old file with
@@ -46,6 +48,7 @@ class HighScore:
         with open(self._score_file, 'w') as file:
             file.write(score)
 
+    #TODO: check if this method works
     def _get_score(self) -> None:
         """
         Gets the current high score from the file and sets
