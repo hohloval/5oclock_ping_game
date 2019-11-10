@@ -75,6 +75,9 @@ class Game:
     start_message: Message
     pause_message: Message
     infinite_mode: bool
+    game_over_message: Message
+    game_over_message2: Message
+    winner: Optional[str]
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -99,6 +102,7 @@ class Game:
         self.infinite_mode = False
         self._game_begun = False
         self._new_round = True
+        self.winner = None
 
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
         """
@@ -139,8 +143,11 @@ class Game:
         """
         Return True iff the game has been won.
         """
-        if self.player1.get_score() == self.goal_score or \
-                self.player2.get_score() == self.goal_score:
+        if self.player1.get_score() == self.goal_score:
+            self.winner = "Player 1"
+            return True
+        if self.player2.get_score() == self.goal_score:
+            self.winner = "Player 2"
             return True
         return False
 
@@ -181,13 +188,15 @@ class Game:
             self.player1.reset_pos()
             self.player2.reset_pos()
             self.ball.reset_pos()
-            self.start_message.set_drawn(True)
+            if not self.game_won():
+                self.start_message.set_drawn(True)
 
     def on_init(self) -> None:
         """
         Initialize this game.
         """
         self._running = True
+        self.winner = None
         pygame.display.set_caption("PING")
         self.new_round()
 
@@ -234,6 +243,22 @@ class Game:
                 self.start_message.set_drawn(False)
                 self.pause_message.set_drawn(False)
                 self.ball.move(dt)
+                
+        # Case when the game is won
+        elif self.game_won():
+            self.game_over_message = Message(self.d_w // 2, self.d_h // 2 - 30, 50, 50,
+                                         0, self, self.winner + " won!",
+                                         True)
+            self.game_over_message2 = Message(self.d_w // 2, self.d_h // 2 + 30,
+                                             10, 10,
+                                             0, self, "Press ... to play again",
+                                             True)
+            self._actors.extend([self.game_over_message, self.game_over_message2])
+            self.start_message.set_drawn(False)
+            self._pause = True
+            self.pause_message.set_drawn(False)
+            if keys[pygame.K_h]:
+                pass
 
         #Case when its a new round that has not yet been started.
         else:
@@ -243,7 +268,7 @@ class Game:
                 self._pause = False
                 self.start_message.set_drawn(False)
                 self.ball.init_move()
-
+                
     def on_execute(self) -> None:
         """
         Run the game until the game ends.
@@ -271,6 +296,7 @@ class Game:
 
             for actor in self._actors:
                 actor.draw()
+            
 
             # Update ScoreBoards:
             self.board_player1.update()
