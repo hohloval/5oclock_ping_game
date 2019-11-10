@@ -78,6 +78,7 @@ class Game:
     game_over_message: Message
     game_over_message2: Message
     winner: Optional[str]
+    game_reset: bool
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -103,6 +104,7 @@ class Game:
         self._game_begun = False
         self._new_round = True
         self.winner = None
+        self.game_reset = False
 
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
         """
@@ -190,6 +192,17 @@ class Game:
             self.ball.reset_pos()
             if not self.game_won():
                 self.start_message.set_drawn(True)
+                
+    def reset_game(self) -> None:
+        """Reset this game.
+        """
+        self._running = False
+        self.game_reset = True
+        self._pause = False
+        self.game_over_message.set_drawn(False)
+        self.game_over_message2.set_drawn(False)
+        self._game_begun = False
+        self.new_round()
 
     def on_init(self) -> None:
         """
@@ -199,6 +212,7 @@ class Game:
         self.winner = None
         pygame.display.set_caption("PING")
         self.new_round()
+        self.game_reset = False
 
     def on_move(self, dt: float) -> None:
         """
@@ -251,14 +265,14 @@ class Game:
                                          True)
             self.game_over_message2 = Message(self.d_w // 2, self.d_h // 2 + 30,
                                              10, 10,
-                                             0, self, "Press ... to play again",
+                                             0, self, "Press 'H' to play again",
                                              True)
             self._actors.extend([self.game_over_message, self.game_over_message2])
             self.start_message.set_drawn(False)
             self._pause = True
             self.pause_message.set_drawn(False)
             if keys[pygame.K_h]:
-                pass
+                self.reset_game()
 
         #Case when its a new round that has not yet been started.
         else:
@@ -296,13 +310,15 @@ class Game:
 
             for actor in self._actors:
                 actor.draw()
-            
 
             # Update ScoreBoards:
             self.board_player1.update()
             self.board_player2.update()
             # pygame.draw.rect(self.screen, RED, (0,0, display_width,5 ))
             pygame.display.update()
+        
+        if self.game_reset:
+            self.on_execute()
 
         pygame.quit()
 
