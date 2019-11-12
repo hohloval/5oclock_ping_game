@@ -111,7 +111,7 @@ class Game:
         self.high_score = HighScore(0, 0, 70, (250, 250, 250),
                                     self.screen, "high_score_value.txt")
         self.exit_button = Button(0, 0, (0, 0, 0), 65,
-                                  round(self.d_h * 0.05), "EXIT",
+                                  round(self.d_h * 0.05), "MENU",
                                   self.return_to_menu)
 
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
