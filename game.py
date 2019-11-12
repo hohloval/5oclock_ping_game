@@ -209,6 +209,24 @@ class Game:
         self._game_begun = False
         self.new_round()
 
+    def return_to_menu(self) -> None:
+        """
+        Returns the game to the main menu
+        """
+        self._running = False
+        self.game_reset = False
+        self._pause = False
+        self._game_begun = False
+        self.new_round()
+        self._new_round = True
+        score1 = self.player1.get_score()
+        score2 = self.player2.get_score()
+        if self.infinite_mode:
+            if score1 >= score2:
+                self.high_score.store_score(score1)
+            else:
+                self.high_score.store_score(score2)
+
     def on_init(self) -> None:
         """
         Initialize this game.
@@ -225,11 +243,16 @@ class Game:
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self._running = False
+                pygame.quit()
+                quit()
+
         keys = pygame.key.get_pressed()
 
+        if keys[pygame.K_ESCAPE]:
+            self.return_to_menu()
+
         #Case when a round is on-going and is not paused.
-        if not self._pause and not self._new_round:
+        elif not self._pause and not self._new_round:
             # player1 moves
             if keys[pygame.K_p]:
                 self._pause = True
@@ -252,8 +275,8 @@ class Game:
                                         self.player2.get_dimensions()[1] +
                                         self.player2.get_speed() <= 720):
                 self.player2.move("down", dt)
-
             self.ball.move(dt)
+
 
         #Case when user has paused the game.
         elif not self._new_round:
@@ -262,6 +285,8 @@ class Game:
                 self.start_message.set_drawn(False)
                 self.pause_message.set_drawn(False)
                 self.ball.move(dt)
+            if keys[pygame.K_ESCAPE]:
+                self.game_won()
 
         # Case when the game is won
         elif self.game_won():
@@ -279,6 +304,7 @@ class Game:
             if keys[pygame.K_h]:
                 self.reset_game()
 
+
         #Case when its a new round that has not yet been started.
         else:
             if keys[pygame.K_SPACE]:
@@ -287,6 +313,7 @@ class Game:
                 self._pause = False
                 self.start_message.set_drawn(False)
                 self.ball.init_move()
+
 
     def on_execute(self) -> None:
         """
@@ -325,5 +352,4 @@ class Game:
         if self.game_reset:
             self.on_execute()
 
-        pygame.quit()
 
