@@ -3,6 +3,7 @@ from typing import Optional, List, Tuple, Union
 from actors import *
 import pygame
 import random
+from high_score import HighScore
 
 
 class Game:
@@ -57,7 +58,7 @@ class Game:
         _actors:
             The list of all the Actor objects in this game.
         """
-    screen: Surface
+    screen: pygame.Surface
     screen_size: Tuple[int]
     _running: bool
     goal_score: int
@@ -79,6 +80,7 @@ class Game:
     game_over_message2: Message
     winner: Optional[str]
     game_reset: bool
+    high_score: HighScore
 
     def __init__(self, size: Tuple[int], goal: int) -> None:
         """
@@ -105,6 +107,8 @@ class Game:
         self._new_round = True
         self.winner = None
         self.game_reset = False
+        self.high_score = HighScore(0, 0, 70, (250, 250, 250),
+                                    self.screen, "high_score_value.txt")
 
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
         """
@@ -192,7 +196,7 @@ class Game:
             self.ball.reset_pos()
             if not self.game_won():
                 self.start_message.set_drawn(True)
-                
+
     def reset_game(self) -> None:
         """Reset this game.
         """
@@ -257,7 +261,7 @@ class Game:
                 self.start_message.set_drawn(False)
                 self.pause_message.set_drawn(False)
                 self.ball.move(dt)
-                
+
         # Case when the game is won
         elif self.game_won():
             self.game_over_message = Message(self.d_w // 2, self.d_h // 2 - 30, 50, 50,
@@ -282,7 +286,7 @@ class Game:
                 self._pause = False
                 self.start_message.set_drawn(False)
                 self.ball.init_move()
-                
+
     def on_execute(self) -> None:
         """
         Run the game until the game ends.
@@ -316,7 +320,7 @@ class Game:
             self.board_player2.update()
             # pygame.draw.rect(self.screen, RED, (0,0, display_width,5 ))
             pygame.display.update()
-        
+
         if self.game_reset:
             self.on_execute()
 

@@ -1,5 +1,4 @@
 from typing import Tuple
-from game import Game
 import pygame
 
 
@@ -31,7 +30,7 @@ class HighScore:
         self._font_size = font_size
         self._surface = curr_surface
         self._score_file = score_file
-        self._get_score()
+        self.get_score()
 
     def draw(self) -> None:
         """
@@ -53,7 +52,7 @@ class HighScore:
                           text.get_width(), 10))
         self._surface.blit(text, text_pos)
 
-    #TODO: check if this method works
+    # TODO: check if this method works
     def store_score(self, score) -> None:
         """
         Store the given score in the file by over-riding the old file with
@@ -61,10 +60,11 @@ class HighScore:
         :param score: an int representing the score
         """
         with open(self._score_file, 'w') as file:
-            file.write(score)
+            if score > int(self.get_score().rstrip()):
+                file.write(score)
 
-    #TODO: check if this method works
-    def _get_score(self) -> None:
+    # TODO: check if this method works
+    def get_score(self) -> None:
         """
         Gets the current high score from the file and sets
         self._high_score to it.
