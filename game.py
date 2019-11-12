@@ -110,6 +110,9 @@ class Game:
         self.game_reset = False
         self.high_score = HighScore(0, 0, 70, (250, 250, 250),
                                     self.screen, "high_score_value.txt")
+        self.exit_button = Button(0, 0, (0, 0, 0), 65,
+                                  round(self.d_h * 0.05), "EXIT",
+                                  self.return_to_menu)
 
     def get_actor(self, x: int, y: int) -> Optional[Actor]:
         """
@@ -248,13 +251,17 @@ class Game:
                 pygame.quit()
                 quit()
 
+            mouse_pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.exit_button.get_rect().collidepoint(mouse_pos):
+                    self.return_to_menu()
+
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_ESCAPE]:
-            self.return_to_menu()
 
         #Case when a round is on-going and is not paused.
-        elif not self._pause and not self._new_round:
+        if not self._pause and not self._new_round:
             # player1 moves
             if keys[pygame.K_p]:
                 self._pause = True
@@ -316,7 +323,6 @@ class Game:
                 self.start_message.set_drawn(False)
                 self.ball.init_move()
 
-
     def on_execute(self) -> None:
         """
         Run the game until the game ends.
@@ -344,6 +350,7 @@ class Game:
 
             for actor in self._actors:
                 actor.draw()
+                self.exit_button.draw(self.screen)
 
             # Update ScoreBoards:
             self.board_player1.update()

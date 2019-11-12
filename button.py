@@ -55,3 +55,11 @@ class Button:
         # Draw label centered in button
         surface.blit(button_label, (self._x + offset_x,
                                     self._y + offset_y))
+
+    def get_rect(self) -> pygame.rect.Rect:
+        """
+        Retrieves a pygame.Rect object of this button
+        :return: a pygame.Rect object corresponding to the size/position
+         of this button
+        """
+        return pygame.rect.Rect(self._x, self._y, self._width, self._height)
