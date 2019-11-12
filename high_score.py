@@ -36,6 +36,7 @@ class HighScore:
         """
         Draw the high score onto the game screen
         """
+        self.update()
         font = pygame.font.Font(None, self._font_size)
         text = font.render("High Score", 1, self._color)
         text_pos = text.get_rect(centerx=self._center_x,
@@ -61,13 +62,23 @@ class HighScore:
         """
         with open(self._score_file, 'w') as file:
             if score > int(self.get_score().rstrip()):
-                file.write(score)
+                self._high_score = score
+                file.write(str(score))
 
     # TODO: check if this method works
     def get_score(self) -> None:
         """
         Gets the current high score from the file and sets
         self._high_score to it.
+        """
+        with open(self._score_file, 'r') as file:
+            self._high_score = file.readline().rstrip()
+        if not self._high_score:
+            return "0"
+
+    def update(self) -> None:
+        """
+        Updates the high score with the current value from the file
         """
         with open(self._score_file, 'r') as file:
             self._high_score = file.readline().rstrip()

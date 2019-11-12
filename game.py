@@ -213,12 +213,6 @@ class Game:
         """
         Returns the game to the main menu
         """
-        self._running = False
-        self.game_reset = False
-        self._pause = False
-        self._game_begun = False
-        self.new_round()
-        self._new_round = True
         score1 = self.player1.get_score()
         score2 = self.player2.get_score()
         if self.infinite_mode:
@@ -226,6 +220,12 @@ class Game:
                 self.high_score.store_score(score1)
             else:
                 self.high_score.store_score(score2)
+        self._running = False
+        self.game_reset = False
+        self._pause = False
+        self._game_begun = False
+        self.new_round()
+        self._new_round = True
 
     def on_init(self) -> None:
         """
