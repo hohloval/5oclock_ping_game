@@ -150,6 +150,8 @@ class Game:
         """
         Return True iff the game has been won.
         """
+        if self.infinite_mode:
+            return False
         if self.player1.get_score() == self.goal_score:
             self.winner = "Player 1"
             return True
