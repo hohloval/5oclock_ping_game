@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Optional, List, Callable
 from game import Game
 import pygame
+from high_score import HighScore
 
 black = (0, 0, 0)
 red = (255, 0, 0)
@@ -15,7 +16,8 @@ class MainMenu:
     """
     _buttons: List[_Button]
     _game: Game
-    _surface: Surface
+    _surface: pygame.Surface
+    _high_score: HighScore
 
     def __init__(self, game, size):
         """
@@ -34,8 +36,11 @@ class MainMenu:
                                     30, "Down", game.decrease_goal))
         self._buttons.append(Button(mid_pos[0] - 10, mid_pos[1] + 90, red, 120,
                                     30, "Infinite mode", game.toggle_infinite))
-
         # display high scores
+        h_s_width = 5*(self._surface.get_width()) // 6
+        h_s_height = self._surface.get_height() // 4
+        self._high_score = HighScore(h_s_width, h_s_height, 70, (250, 250, 250),
+                                     self._surface, "high_score_value.txt")
 
     def display(self):
         """
@@ -78,6 +83,8 @@ class MainMenu:
         font = pygame.font.Font(None, 28)
         goal_label = font.render("Score Limit", True, white)
         self._surface.blit(goal_label, (mid_pos[0] - 120, mid_pos[1] + 60))
+
+        self._high_score.draw()
 
         if self._game.infinite_mode:
             font = pygame.font.Font(None, 28)
