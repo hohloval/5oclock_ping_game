@@ -4,6 +4,7 @@ from actors import *
 import pygame
 import random
 from high_score import HighScore
+from button import Button
 
 
 class Game:
