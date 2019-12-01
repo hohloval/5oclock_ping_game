@@ -1,5 +1,8 @@
 ﻿# Ping
 The game of ping, similar to but legally distinct from pong.
+## Installation
+
+## How To Play
 
 ## Documentation and Directory Structure
 head over to the wiki page of this project for information on our project structure and documentation.
