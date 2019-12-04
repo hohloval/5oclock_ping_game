@@ -28,6 +28,7 @@ This license is in Public Domain.
 
 ### Alexandr Hohlov
 Wrote and implemented the Message, ScoreBoard and HighScore classes into the game and main menu. Added a random ball angle when the ball bounces off the player paddles. I also smoothed out the movement of the ball and paddle. 
+
 For the README, I setup the format, and acquired the MIT license. For the wiki, I setup the wiki format, wrote the main page and file structure page. For the class description page I wrote the Game, Actor, Subclasses of Actor, HighScore and UML Diagram sections. 
 
 ### Salman
