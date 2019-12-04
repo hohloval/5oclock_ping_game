@@ -23,3 +23,17 @@ Copyright (c) [2019] [Alexandr Hohlov, Salman Azhar, Ekaterina Semyanovskaya, Er
 You can find a copy of the license in the LICENSING.txt file [here](https://github.com/hohloval/5oclock_ping_game/blob/master/LICENSING.txt)
 
 This license is in Public Domain.
+
+## Individual Contributions
+
+### Alexandr
+insert text here
+
+### Salman
+insert text here
+
+### Ekaterina
+insert text here
+
+### Erin
+insert text here
