@@ -38,4 +38,4 @@ insert text here
 insert text here
 
 ### Erin
-insert text here
+For the code, I implemented the MainMenu and Button classes. The MainMenu class displays multiple buttons that let the players choose what they want the score limit to be. It also displays a button that lets them start the game. The buttons can be customized to run any function on any Pygame surface, so they can be reused in any project. For the Project Repository, I added the descriptions in the wiki for the MainMenu and Button classes. I also proofread and edited multiple pages on the wiki and README.
