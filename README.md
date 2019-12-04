@@ -32,7 +32,9 @@ Wrote and implemented the Message, ScoreBoard and HighScore classes into the gam
 For the README, I setup the format, and acquired the MIT license. For the wiki, I setup the wiki format, wrote the main page and file structure page. For the class description page I wrote the Game, Actor, Subclasses of Actor, HighScore and UML Diagram sections. 
 
 ### Salman
-insert text here
+For the application, I added the boundaries and implemented the ball movement and its behaviour for interacting with the various actors. I also implemented the play/pause feature.
+
+For the READEME, I provided two examples of how a user can extend the game. These examples were cosmetic or functional (affects gameplay). To show these extended features in action, i also added gif files demonstrating their implemeneted forms.
 
 ### Ekaterina
 insert text here
