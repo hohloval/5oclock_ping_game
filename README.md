@@ -59,8 +59,9 @@ For the application, I added the boundaries and implemented the ball movement an
 
 For the READEME, I provided two examples of how a user can extend the game. These examples were cosmetic or functional (affects gameplay). To show these extended features in action, i also added gif files demonstrating their implemeneted forms.
 
-### Ekaterina
-insert text here
+### Ekaterina Semyanovskaya
+Code: provided the basic structure for the code: created main.py, game.py, actors.py. Created the Game class with basic methods (__init__, get_actor, game_won, on_execute, on_move) and docstrings; created the Actors class with Player, Ball subclasses, basic methods (__init__, move, draw) and docstrings. Fully implemented the "game over" message appearance + game reset.
+README: Installation process description + How To Play instructions.
 
 ### Erin
 For the code, I implemented the MainMenu and Button classes. The MainMenu class displays multiple buttons that let the players choose what they want the score limit to be. It also displays a button that lets them start the game. The buttons can be customized to run any function on any Pygame surface, so they can be reused in any project. For the Project Repository, I added the descriptions in the wiki for the MainMenu and Button classes. I also proofread and edited multiple pages on the wiki and README.
